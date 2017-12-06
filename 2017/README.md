@@ -29,7 +29,7 @@ The tentative list:
 
 Actual days:
 
-* Day 1:
+* Day 1: Assembly
 * Day 2:
 * Day 3:
 * Day 4:
