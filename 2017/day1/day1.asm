@@ -5,41 +5,46 @@
 ;     nasm -felf64 hello.asm && ld hello.o && ./a.out
 ; ----------------------------------------------------------------------------------------
 
-        global  _start
+        section .data
+msg:    db      " ", 0                     ; The characters we read will go here, one at a time
+
 
         section .text
-
-
+        global  _start
 _start:
         mov     rdi, 0x0                ; file descriptor = 0 = stdin
-        lea     rsi, [rsp+8]            ; buffer = address to store the bytes read
+        lea     rsi, [msg]            ; buffer = address to store the bytes read
         mov     rdx, 0x1                ; the number of bytes to read
         mov     rax, 0x0                ; SYSCALL number for reading
         syscall
 
-        mov     rdi, 1                  ; file descriptor = 1 = stdout
-        lea     rsi, [rsp+8]
-        mov     rdx, 1
-        mov     rax, 0x1                ; syscall code for write
-        syscall
+        lea     rdi, [msg]            ; first arg is string to write
+        mov     rsi, 1                  ; second arg is length of string
+        call    print_string
 
         ;; exit(0)
         mov     eax, 60                 ; system call 60 is exit
         xor     rdi, rdi                ; exit code 0
         syscall                         ; invoke operating system to exit
 
-print_
+print_string:
+        ; the calling convention is to pass arguments in registers first
+        ; so we assume the address of the string to print is in rdi, and
+        ; the length is in rsi
+        push    rdx
+        push    rsi
+        push    rdi
+        push    rax
+        mov     rdx, rsi                ; arg2 is length, that's in rsi
+        mov     rsi, rdi                ; arg1 is memory address, that's in rdi
+        mov     rdi, 1                  ; print to stdout
+        mov     rax, 1                  ; syscall code for write
+        syscall
+        pop rax
+        pop rdi
+        pop rsi
+        pop rdx
+        ret
 
-        ;xor     rax, rax                ; clear off rax
-        ;mov     rbx, 
-        ;; write(1, message, 13)
-        ;mov     rax, 1                  ; system call 1 is write
-        ;mov     rdi, 1                  ; file handle 1 is stdout
-        ;mov     rsi, message            ; address of string to output
-        ;mov     rdx, 13                 ; number of bytes
-        ;syscall                         ; invoke operating system to do the write
-
-message:
-        db      " "                     ; The characters we read will go here, one at a time
 
 
