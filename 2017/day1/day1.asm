@@ -14,22 +14,22 @@ str:    db      "%s"
 
         section .text
 main:
+        call    read_char
+
+        ; print the string we read
+        push    rbx                     ; caller-save register
+        lea     rdi, [str]              ; set format string
+        lea     rsi, [msg]              ; set string argument
+        call    printf
+        pop     rbx                     ; caller-save register
+
+        ret
+
+read_char:
+        ; Read a single char from standard input into the msg buffer
         mov     rdi, 0x0                ; file descriptor = 0 = stdin
         lea     rsi, [msg]            ; buffer = address to store the bytes read
         mov     rdx, 0x1                ; the number of bytes to read
         mov     rax, 0x0                ; SYSCALL number for reading
         syscall
-
-        lea     rdi, [str]              ; set format string
-        lea     rsi, [msg]              ; set string argument
-
-        ; print the string we read
-        push    rax
-        push    rbx
-        push    rcx
-        call    printf
-        pop     rcx
-        pop     rbx
-        pop     rax
-
         ret
