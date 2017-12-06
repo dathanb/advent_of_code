@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -it zhongwei/nasm
+docker run --rm --name day1 -it --mount type=bind,source="$(pwd)",target=/day1 dathan/day1 /bin/bash
