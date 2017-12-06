@@ -1,0 +1,18 @@
+#!/bin/bash
+
+test_output="$(./day2 < test.input | sed -e 's/[[:space:]]*$//')"
+echo "test_output"
+echo $test_output
+expected_test_output="$(cat test.output | sed -e 's/[[:space:]]*$//')"
+echo "expected test output"
+echo $expected_test_output
+
+if [[ $test_output != $expected_test_output ]]; then
+  echo "Failed test case"
+  exit 1
+fi
+
+real_output="$(./day2 < day2.input)"
+echo "Real output"
+echo $real_output
+

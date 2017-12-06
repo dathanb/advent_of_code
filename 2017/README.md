@@ -1,9 +1,7 @@
 For the [2017 Advent of Code](https://adventofcode.com/2017), I want to do something novel. So I'm going to solve each problem using a different language!
 
-The tentative list:
+Tentatively remaining languages:
 * Ada
-* Assembly
-* Awk
 * C
 * C#
 * C++
@@ -30,7 +28,7 @@ The tentative list:
 Actual days:
 
 * Day 1: Assembly
-* Day 2:
+* Day 2: Awk
 * Day 3:
 * Day 4:
 * Day 5:
