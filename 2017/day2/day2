@@ -1,0 +1,14 @@
+#!/usr/bin/awk -f
+
+BEGIN { checksum = 0 }
+{
+  min = $1
+  max = $1
+  for (i=1; i <= NF; i++) {
+    if ($i < min) min = $i
+    if ($i > max) max = $i
+  }
+  checksum += max - min
+}
+
+END { print checksum }
