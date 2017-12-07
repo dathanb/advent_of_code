@@ -16,7 +16,6 @@ Tentatively remaining languages:
 * PHP
 * Perl
 * Python
-* R
 * Ruby
 * Rust
 * SQL
@@ -29,7 +28,7 @@ Actual days:
 
 * Day 1: Assembly
 * Day 2: Awk
-* Day 3:
+* Day 3: R
 * Day 4:
 * Day 5:
 * Day 6:
