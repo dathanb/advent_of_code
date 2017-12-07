@@ -1,3 +1,7 @@
 #!/bin/bash
 
-nasm -f elf64 day1.asm && gcc -o day1 day1.o
+rm -rf out
+mkdir out
+
+nasm -f elf64 -o out/part1.o part1.asm && gcc -o out/part1 out/part1.o
+nasm -f elf64 -o out/part2.o part2.asm && gcc -o out/part2 out/part2.o
