@@ -8,6 +8,7 @@ Tentatively remaining languages:
 * Clojure
 * Fortran
 * Go
+* Groovy
 * Haskell
 * Java
 * JavaScript
@@ -19,9 +20,10 @@ Tentatively remaining languages:
 * Ruby
 * Rust
 * Scala
-* Scratch
+* Smalltalk
 * Swift
 * TypeScript
+* Zsh
 
 ## Actual days:
 
@@ -29,7 +31,7 @@ Tentatively remaining languages:
 * Day 2: Awk
 * Day 3: R
 * Day 4: SQL
-* Day 5:
+* Day 5: Zsh
 * Day 6:
 * Day 7:
 * Day 8:
