@@ -1,0 +1,1 @@
+psql -U postgres < part1.sql

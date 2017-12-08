@@ -18,18 +18,17 @@ Tentatively remaining languages:
 * Python
 * Ruby
 * Rust
-* SQL
 * Scala
 * Scratch
 * Swift
 * TypeScript
 
-Actual days:
+## Actual days:
 
 * Day 1: Assembly
 * Day 2: Awk
 * Day 3: R
-* Day 4:
+* Day 4: SQL
 * Day 5:
 * Day 6:
 * Day 7:
