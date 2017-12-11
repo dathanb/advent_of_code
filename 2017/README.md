@@ -9,7 +9,6 @@ Tentatively remaining languages:
 * Fortran
 * Go
 * Groovy
-* Haskell
 * Java
 * JavaScript
 * Kotlin
@@ -32,7 +31,7 @@ Tentatively remaining languages:
 * Day 3: R
 * Day 4: SQL
 * Day 5: Zsh
-* Day 6:
+* Day 6: Haskell
 * Day 7:
 * Day 8:
 * Day 9:
