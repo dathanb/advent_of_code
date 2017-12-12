@@ -31,53 +31,77 @@
 
 (defn load_towers [fname]
   (with-open [rdr (io/reader fname)]
-    (for [line (line-seq rdr)
-      :let [tower (parse_tower line)]]
-      tower
+    ;(doseq [line (line-seq rdr)]
+    ;  (println (parse_tower line))
+    ;)
+    (apply list
+      (for [line (line-seq rdr)
+            :let [tower (parse_tower line)]]
+        tower
+      )
     )
   )
 )
 
-(defn in? 
+(defn in?
   "true if coll contains elm"
   [coll elm]
   (some #(= elm %) coll)
 )
 
 (defn swap [coll left right]
-  (concat (take left coll) [(nth coll right)] (take (- right left 1) (drop (+ left 1) coll)) [(nth coll left)])
+  (concat (take left coll) [(nth coll right)] (take (- right left 1) (drop (+ left 1) coll)) [(nth coll left)] (drop (+ right 1) coll))
+)
+
+(defn should_swap? [towers, left, right]
+  (def left_tower (nth towers left))
+  (def right_tower (nth towers right))
+  (in? (:children right_tower) (:name left_tower))
 )
 
 (defn maybe_swap [towers, left, right]
   (def left_tower (nth towers left))
   (def right_tower (nth towers right))
   (if (in? (:children right_tower) (:name left_tower))
-    (swap towers left right)
-    towers
+    [(swap towers left right) 0 1]
+    [towers left (+ right 1)]
   )
 )
 
 (defn sort_step [towers, left, right]
-  (if (and (= (- (count towers) 1) left) (= (count towers) right))
-    towers
-    (if (= (count towers) right)
-      (sort_step (+ left 1) (+ left 2))
-      (maybe_swap towers left right)
+  (do (print (format "%d, %d\n" left right))
+    (if (and (= (- (count towers) 1) left) (= (count towers) right))
+      towers
+      (if (= (count towers) right)
+        (sort_step towers (+ left 1) (+ left 2))
+        (if (should_swap? towers left right)
+          (recur (swap towers left right) left (+ left 1))
+          (recur towers left (+ right 1))
+        )
+      )
     )
   )
-;  (match [left right]
-;         [(- (count towers) 1) (count towers)] towers
-;         [_ (count towers)] (sort_step (+ left 1) (+ left 2))
-;         :else (maybe_swap towers left right) )
 )
+
 
 (defn topo_sort [towers]
-  ; It's not the most efficient, but to topologically sort we can just do a swap sort whenever we find
-  ; a dependency when the order is wrong
-  (nth towers 1)
+  (sort_step towers 0 1)
 )
 
-(def filename "test_input")
+(defn find_root [towers right]
+  (do (print (format "%d\n" right))
+    (if (= right (count towers))
+      (nth towers 0)
+      (if (should_swap? towers 0 right)
+        (recur (swap towers 0 right) 1)
+        (recur towers (+ right 1))
+      )
+    )
+  )
+)
+
+(def filename "input")
+;(def filename "test_input")
 (def towers (apply list (load_towers filename)))
-;(print (first (topo_sort towers)))
+(print (find_root towers 1))
 
