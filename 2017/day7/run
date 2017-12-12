@@ -1,0 +1,3 @@
+#!/bin/bash
+docker build -t dathan/aoc-day7 .
+docker run -it --rm --mount type=bind,source=$(pwd),target=/usr/src/app dathan/aoc-day7

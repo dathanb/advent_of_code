@@ -5,7 +5,6 @@ Tentatively remaining languages:
 * C
 * C#
 * C++
-* Clojure
 * Fortran
 * Go
 * Groovy
@@ -22,7 +21,6 @@ Tentatively remaining languages:
 * Smalltalk
 * Swift
 * TypeScript
-* Zsh
 
 ## Actual days:
 
@@ -32,7 +30,7 @@ Tentatively remaining languages:
 * Day 4: SQL
 * Day 5: Zsh
 * Day 6: Haskell
-* Day 7:
+* Day 7: Clojure
 * Day 8:
 * Day 9:
 * Day 10:
