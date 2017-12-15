@@ -17,7 +17,6 @@ Tentatively remaining languages:
 * Python
 * Ruby
 * Rust
-* Scala
 * Smalltalk
 * Swift
 * TypeScript
@@ -31,7 +30,7 @@ Tentatively remaining languages:
 * Day 5: Zsh
 * Day 6: Haskell
 * Day 7: Clojure
-* Day 8:
+* Day 8: Scala
 * Day 9:
 * Day 10:
 * Day 11:
