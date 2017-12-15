@@ -20,14 +20,13 @@ program hello
 
   CALL read_file('input', str, data_length)
 
-  !call assert_equal(1,  score('{}'))
-  !call assert_equal(6,  score('{{{}}}')) ! score 1 + 2 + 3 = 6
-  !call assert_equal(5,  score('{{},{}}')) ! score 1 + 2 + 2 = 6
-  !call assert_equal(16, score('{{{},{},{{}}}}')) ! score 1 + 2 + 3 + 3 + 3 + 4 = 16
-  !call assert_equal(1,  score('{<a>,<a>,<a>,<a>}')) ! score 1
-  !call assert_equal(9,  score('{{<ab>},{<ab>},{<ab>},{<ab>}}')) ! score 1 + 2 + 2 + 2 + 2 = 9
-  !call assert_equal(9,  score('{{<!!>},{<!!>},{<!!>},{<!!>}}')) ! score 1 + 2 + 2 + 2 + 2 = 9
-  !call assert_equal(3,  score('{{<a!>},{<a!>},{<a!>},{<ab>}}')) ! score 1 + 2 = 3
+  !call assert_equal(0,  score('<>'))
+  !call assert_equal(17, score('<random characters>'))
+  !call assert_equal(3,  score('<<<<>'))
+  !call assert_equal(2,  score('<{!>}>'))
+  !call assert_equal(0,  score('<!!>'))
+  !call assert_equal(0,  score('<!!!>>'))
+  !call assert_equal(10, score('<{o"i!a,<{i<a>'))
   print *, score(str)
 end program hello
 

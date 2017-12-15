@@ -8,8 +8,12 @@ contains
     the_score = 0
     i = 1
 
-    !print *, "scoring input: ", input
-    call consume_group(input, 1, i, 0, the_score)
+    print *, "scoring input: ", input
+    if (input(i:i) == "{") then
+      call consume_group(input, 1, i, 0, the_score)
+    else if (input(i:i) == "<") then
+      call consume_garbage(input, 1, i, the_score)
+    end if
 
     score = the_score
   end function score
@@ -24,16 +28,9 @@ contains
     integer :: new_depth
     character :: ch
 
-    !print *, "Entering consume_group"
-    !print *, "index: ", i
-    !print *, "data size: ", len(input)
-    !print *, "depth: ", depth
-    !print *, "score: ", score
-
     ! assume input(i:i) is '{'
     new_index = i
     new_depth = depth + 1
-    score = score + new_depth
 
     do
       new_index = new_index + 1
@@ -44,15 +41,13 @@ contains
 
       ch = input(new_index:new_index)
 
-      !print *, "New index: ", new_index
-      !print *, "New character: ", input(new_index:new_index)
       if (ch == '{') then
         call consume_group(input, new_index, new_index, new_depth, score)
       else if (ch == '}') then
         ! return from this call up to the caller
         exit
       else if (ch == '<') then
-        call consume_garbage(input, new_index, new_index)
+        call consume_garbage(input, new_index, new_index, score)
       else if (ch == '!') then
         ! skip the next character, no matter what it is
         new_index = new_index + 1
@@ -60,10 +55,11 @@ contains
     end do
   end subroutine consume_group
 
-  subroutine consume_garbage(input, i, new_index)
+  subroutine consume_garbage(input, i, new_index, score)
     character(len=*),intent(in) :: input
     integer,intent(in) :: i
     integer,intent(out) :: new_index
+    integer,intent(out) :: score
     character :: ch
 
     ! i points to the < character
@@ -79,6 +75,8 @@ contains
         new_index = new_index + 1
       else if (ch == '>') then
         exit
+      else
+        score = score + 1
       end if
     end do
   end subroutine consume_garbage

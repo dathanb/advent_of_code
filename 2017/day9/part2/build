@@ -3,5 +3,5 @@
 set -e
 
 clear
-gfortran -fimplicit-none -o part1 groups.f03 test.f03 io.f03 part1.f03
-./part1
+gfortran -fimplicit-none groups.f03 test.f03 io.f03 part2.f03
+./a.out
