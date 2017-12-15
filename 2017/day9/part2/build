@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+clear
+gfortran -fimplicit-none groups.f03 test.f03 io.f03 part2.f03
+./a.out
