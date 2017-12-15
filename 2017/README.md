@@ -8,7 +8,6 @@ Tentatively remaining languages:
 * Go
 * Groovy
 * Java
-* JavaScript
 * Kotlin
 * Lua
 * PHP
@@ -31,7 +30,7 @@ Tentatively remaining languages:
 * Day 7: Clojure
 * Day 8: Scala
 * Day 9: FORTRAN
-* Day 10:
+* Day 10: Erlang
 * Day 11:
 * Day 12:
 * Day 13:
