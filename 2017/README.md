@@ -5,7 +5,6 @@ Tentatively remaining languages:
 * C
 * C#
 * C++
-* Fortran
 * Go
 * Groovy
 * Java
@@ -31,7 +30,7 @@ Tentatively remaining languages:
 * Day 6: Haskell
 * Day 7: Clojure
 * Day 8: Scala
-* Day 9:
+* Day 9: FORTRAN
 * Day 10:
 * Day 11:
 * Day 12:
