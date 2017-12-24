@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker build -t day10 .
+docker run --rm -it --mount type=bind,source=$(pwd),target=/app day10
