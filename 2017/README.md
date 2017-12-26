@@ -1,7 +1,6 @@
 For the [2017 Advent of Code](https://adventofcode.com/2017), I want to do something novel. So I'm going to solve each problem using a different language!
 
 Tentatively remaining languages:
-* Ada
 * C
 * C#
 * C++
@@ -31,7 +30,7 @@ Tentatively remaining languages:
 * Day 8: Scala
 * Day 9: FORTRAN
 * Day 10: Erlang
-* Day 11:
+* Day 11: Ada
 * Day 12:
 * Day 13:
 * Day 14:
