@@ -12,7 +12,6 @@ Tentatively remaining languages:
 * PHP
 * Perl
 * Python
-* Ruby
 * Swift
 * TypeScript
 
@@ -31,7 +30,7 @@ Tentatively remaining languages:
 * Day 11: Ada
 * Day 12: Rust
 * Day 13: Smalltalk
-* Day 14:
+* Day 14: Elixir
 * Day 15:
 * Day 16:
 * Day 17:
