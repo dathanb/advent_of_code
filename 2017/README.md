@@ -31,7 +31,7 @@ Tentatively remaining languages:
 * Day 12: Rust
 * Day 13: Smalltalk
 * Day 14: Elixir
-* Day 15:
+* Day 15: Dart
 * Day 16:
 * Day 17:
 * Day 18:
