@@ -7,7 +7,6 @@ Tentatively remaining languages:
 * Go
 * Groovy
 * Java
-* Kotlin
 * Lua
 * PHP
 * Perl
@@ -32,7 +31,7 @@ Tentatively remaining languages:
 * Day 13: Smalltalk
 * Day 14: Elixir
 * Day 15: Dart
-* Day 16:
+* Day 16: Kotlin
 * Day 17:
 * Day 18:
 * Day 19:
