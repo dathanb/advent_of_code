@@ -1,4 +1,5 @@
 import java.io.File
+import java.util.HashMap
 
 class DanceLineup(val lineup: String = "abcdefghijklmnop") {
   fun spin(count: Int): DanceLineup {
@@ -22,24 +23,20 @@ class DanceLineup(val lineup: String = "abcdefghijklmnop") {
   }
 
   fun dispatch(operation: String) : DanceLineup {
-    print("$operation: ")
       if(operation.startsWith("x")) {
         // exchange
           val (first, second) = operation.substring(1).split("/")
         val newLineup = exchange(first.toInt(), second.toInt())
-          println(newLineup)
         return newLineup
       } else if (operation.startsWith("p")) {
         // partner
         val (first, second) = operation.substring(1).split("/")
         val newLineup = partner(first, second)
-        println(newLineup)
         return newLineup
       } else if (operation.startsWith("s")) {
         // spin
           val len = operation.substring(1)
         val newLineup = spin(len.toInt())
-        println(newLineup)
         return newLineup
       } else {
         throw RuntimeException("Unrecognized move: $operation")
@@ -61,6 +58,19 @@ fun main(args: Array<String>) {
   var lineup = DanceLineup("abcdefghijklmnop")
   val input = File("input").readText()
 
-  DanceCaller(input, lineup).dance()
+  val lineupsSoFar = HashMap<String, Int>()
+
+  var iteration = 0
+
+  while (!lineupsSoFar.containsKey(lineup.lineup)) {
+    lineupsSoFar.put(lineup.lineup, iteration)
+    iteration += 1
+    lineup = DanceCaller(input, lineup).dance()
+      println("$iteration: ${lineup.lineup}")
+  }
+
+  println("Found loop at iteration $iteration")
+  // In our case it loops at iteration 30. 1 billion modulo 30 is 10, so the answer is
+  // whatever lineup we see at iteration 10
 }
 

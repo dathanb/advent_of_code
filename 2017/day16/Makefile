@@ -23,6 +23,10 @@ testpart2: runpart2
 part2: INPUT=input
 part2: runpart2
 
-runpart2:
+build_part2:
 	clear
-	gst part2.st < $(INPUT)
+	kotlinc src/part2.kt -include-runtime -d build/part2.jar
+
+runpart2: build_part2
+	clear
+	java -jar build/part2.jar
