@@ -1,9 +1,7 @@
 For the [2017 Advent of Code](https://adventofcode.com/2017), I want to do something novel. So I'm going to solve each problem using a different language!
 
 Tentatively remaining languages:
-* C
 * C#
-* C++
 * Go
 * Groovy
 * Java
@@ -32,9 +30,9 @@ Tentatively remaining languages:
 * Day 15: Dart
 * Day 16: Kotlin
 * Day 17: Lua
-* Day 18:
+* Day 18: C++
 * Day 19:
-* Day 20:
+* Day 20: C
 * Day 21:
 * Day 22:
 * Day 23:
