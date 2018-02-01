@@ -30,9 +30,9 @@ Tentatively remaining languages:
 * Day 15: Dart
 * Day 16: Kotlin
 * Day 17: Lua
-* Day 18: C++
+* Day 18: C
 * Day 19:
-* Day 20: C
+* Day 20: C++
 * Day 21:
 * Day 22:
 * Day 23:
