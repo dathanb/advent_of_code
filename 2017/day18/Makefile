@@ -14,3 +14,12 @@ part1: build_part1
 
 build_part1:
 	gcc part1.c -march=native -m64 -o build/part1
+
+test_part2: build_part2
+	build/part2 < testinput
+
+part2: build_part2
+	build/part2 < input
+
+build_part2:
+	gcc part2.c -march=native -m64 -o build/part2
