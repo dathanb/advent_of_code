@@ -9,7 +9,6 @@ Tentatively remaining languages:
 * Perl
 * Python
 * Swift
-* TypeScript
 
 ## Actual days:
 
@@ -31,7 +30,7 @@ Tentatively remaining languages:
 * Day 16: Kotlin
 * Day 17: Lua
 * Day 18: C
-* Day 19:
+* Day 19: TypeScript
 * Day 20: C++
 * Day 21:
 * Day 22:
