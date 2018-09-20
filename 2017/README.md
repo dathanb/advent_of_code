@@ -4,6 +4,7 @@ Tentatively remaining languages:
 * C#
 * Go
 * Groovy
+* Idris
 * Java
 * PHP
 * Perl

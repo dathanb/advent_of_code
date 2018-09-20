@@ -1,0 +1,19 @@
+{
+  "name": "day19",
+  "version": "1.0.0",
+  "description": "Solution to Advent of Code 2017 Day 19",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@std/esm": "^0.20.0",
+    "es6-promise": "^4.2.4",
+    "typescript": "^2.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^9.4.0"
+  }
+}
