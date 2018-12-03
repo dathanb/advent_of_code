@@ -1,0 +1,2 @@
+throw new RuntimeException("Please specify a root project name")
+rootProject.name = ""

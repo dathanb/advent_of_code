@@ -1,0 +1,28 @@
+buildscript {
+    repositories {
+        maven {
+            url "http://dl.bintray.com/palantir/releases"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.palantir:gradle-flexversion:0.4.0'
+    }
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: "java"
+apply plugin: 'gradle-flexversion'
+apply from: "gradle/setup.gradle"
+
+group "dathanb"
+throw new RuntimeException("Please specify a description for this project")
+//description = 
+version flexVersion()
+
+dependencies {
+}
