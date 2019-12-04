@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::fs::File;
 use std::io::{self, BufReader, prelude::*};
 
@@ -14,40 +14,42 @@ fn main() -> io::Result<()> {
 
     part1(&lines);
 
-//    println!("{}", part2(lines));
+    part2(&lines);
 
     Ok(())
 }
 
 fn part1(lines: &Vec<&str>) {
-    let set1 = get_point_set(lines[0]);
-    let set2 = get_point_set(lines[1]);
+    let first_wire_points = get_point_set(lines[0]);
+    let second_wire_points = get_point_set(lines[1]);
 
-    let intersection = set1.intersection(&set2);
+    let first_wire_coordinates:HashSet<&Coordinate> = first_wire_points.keys().collect();
+    let second_wire_coordinates:HashSet<&Coordinate> = second_wire_points.keys().collect();
+    let intersection_points = first_wire_coordinates.intersection(&second_wire_coordinates);
 
-    println!("{}", intersection.map(|c| Coordinate{x:0, y:0}.distance(*c)).min().unwrap());
+    println!("{}", intersection_points.map(|c| Coordinate{x:0, y:0}.distance(**c)).min().unwrap());
 }
 
-//fn part2(_lines: &Vec<&str>) -> &'static str {
-////    let set1 = get_point_set(lines[0]);
-////    let set2 = get_point_set(lines[1]);
-//
-//    return "";
-//}
+fn part2(lines: &Vec<&str>) {
+    let _set1 = get_point_set(lines[0]);
+    let _set2 = get_point_set(lines[1]);
+}
 
-fn get_point_set(line: &str) -> HashSet<Coordinate> {
-    let mut all_points: HashSet<Coordinate> = HashSet::new();
+fn get_point_set(line: &str) -> HashMap<Coordinate, i32> {
+    let mut all_points: HashMap<Coordinate, i32> = HashMap::new();
     let movements: Vec<Movement> = line.split(",")
         .map(|n| n.trim())
         .map(|d| Movement::parse(d))
         .collect();
 
     let mut current_coordinate = Coordinate { x: 0, y: 0 };
+    let mut steps = 0;
     movements.iter()
         .flat_map(|m| m.to_units())
         .for_each(|m| {
+            steps += 1;
             current_coordinate = current_coordinate.apply(m);
-            all_points.insert(current_coordinate);
+            all_points.insert(current_coordinate, steps);
         });
 
     all_points
