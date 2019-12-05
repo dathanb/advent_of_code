@@ -19,7 +19,7 @@ fn part1(input: &str) {
     let mut count = 0;
 
     for n in lower_bound .. upper_bound+1 {
-        if matches_criteria(n) {
+        if has_six_digits(n) && has_repeat(n) && is_non_decreasing(n) {
             count += 1;
         }
     }
@@ -27,12 +27,11 @@ fn part1(input: &str) {
     println!("{}", count);
 }
 
-fn matches_criteria(n: i32) -> bool {
-    if n < 100000 || n > 999999 {
-        return false;
-    }
+fn has_six_digits(n: i32) -> bool {
+    n >= 100000 && n <= 999999
+}
 
-    // check the "two adjacent digits are the same" criterion
+fn has_repeat(n: i32) -> bool {
     let digits: Vec<i32> = get_digits(n);
     let mut repeat = false;
     for i in 0..digits.len()-1 {
@@ -40,10 +39,11 @@ fn matches_criteria(n: i32) -> bool {
             repeat = true;
         }
     }
-    if !repeat {
-        return false;
-    }
+    repeat
+}
 
+fn is_non_decreasing(n: i32) -> bool {
+    let digits: Vec<i32> = get_digits(n);
     for i in 0..digits.len()-1 {
         if digits[i+1] < digits[i] {
             return false;
