@@ -1,19 +1,14 @@
 use std::fs;
-use std::io::{self, prelude::*};
+use std::io;
 
+mod intcode;
 
 fn main() -> io::Result<()> {
-    let contents = fs::read_to_string("resources/input.txt").unwrap();
-    let nums: Vec<i32> = contents.split(",")
-        .map(|n| n.trim())
-        .map(|n| n.parse::<i32>())
-        .filter(|n| n.is_ok())
-        .map(|n| n.unwrap())
-        .collect();
+    let _contents = fs::read_to_string("resources/input.txt").unwrap();
 
-    part1(&nums).unwrap();
+//    part1(&nums).unwrap();
 
-    part2(&nums).unwrap();
+//    part2(&nums).unwrap();
 
     Ok(())
 }
