@@ -1,13 +1,13 @@
 #[derive(Clone)]
-struct Computer {
+pub struct Computer {
     memory: Vec<i32>,
     ip: usize,
-    input: i32,
-    output: i32,
+    pub input: i32,
+    pub output: i32,
 }
 
 impl Computer {
-    fn parse(input: &str) -> Computer {
+    pub fn parse(input: &str) -> Computer {
         let nums: Vec<i32> = input.split(",")
             .map(|n| n.trim())
             .map(|n| n.parse::<i32>())
@@ -16,6 +16,18 @@ impl Computer {
             .collect();
 
         Computer { memory: nums, ip: 0, input: 0, output: 0 }
+    }
+
+    pub fn run(&mut self) -> Result<(), &'static str> {
+        let mut keep_going = true;
+        while keep_going {
+            match self.step() {
+                Ok(n) => keep_going = n,
+                Err(str) => return Err(str)
+            };
+        }
+
+        Ok(())
     }
 
     /**
@@ -28,10 +40,16 @@ impl Computer {
     fn step(&mut self) -> Result<bool, &'static str> {
         let full_opcode = self.get_and_advance(AddressingMode::Immediate);
         let opcode = full_opcode % 100;
-        if opcode == 1 {
-            return AddInstruction{opcode: full_opcode}.execute(self);
-        }
-        Err("Didn't match an opcode")
+        let instruction: Box<dyn Instruction> = match opcode {
+            1 => Box::new(AddInstruction{opcode: full_opcode}),
+            2 => Box::new(MultiplyInstruction{opcode: full_opcode}),
+            3 => Box::new(InputInstruction{opcode: full_opcode}),
+            4 => Box::new(OutputInstruction{opcode: full_opcode}),
+            99 => Box::new(TerminateInstruction{opcode: full_opcode}),
+            _ => panic!("Unrecognized opcode: {}", full_opcode),
+        };
+
+        instruction.execute(self)
     }
 
     /**
@@ -48,6 +66,17 @@ impl Computer {
             AddressingMode::Immediate => n,
             AddressingMode::Indirect => self.memory[n as usize],
         }
+    }
+
+    pub fn print(&self) {
+        println!("ip: {}", self.ip);
+        println!("input: {}", self.input);
+        println!("output: {}", self.output);
+        print!("Memory: ");
+        for i in 0..self.memory.len() {
+            print!("{},", self.memory[i]);
+        }
+        println!();
     }
 }
 
@@ -71,7 +100,6 @@ enum AddressingMode {
     Indirect,
 }
 
-
 impl AddressingMode {
     fn get_by_index(index: i32) -> AddressingMode {
         match index {
@@ -91,7 +119,7 @@ struct TerminateInstruction {
 }
 
 impl Instruction for TerminateInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, _computer: &mut Computer) -> Result<bool, &'static str> {
         Ok(false)
     }
 }
@@ -160,10 +188,45 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_add_opcode_immediate() {
-        let mut computer = Computer::parse("0001,4,3,4,33");
+    fn test_input() {
+        let mut computer = Computer::parse("3,0,99");
+        computer.input = 1;
         computer.step();
-        assert_eq!(computer.memory[4], 36);
+        assert_eq!(computer.memory[0], 1);
     }
 
+    #[test]
+    fn test_output() {
+        let mut computer = Computer::parse("4,0,99");
+        computer.step();
+        assert_eq!(computer.output, 4);
+    }
+
+    #[test]
+    fn test_add_instruction_indirect() {
+        let mut computer = Computer::parse("0001,4,3,4,33");
+        computer.step();
+        assert_eq!(computer.memory[4], 37);
+    }
+
+    #[test]
+    fn test_add_instruction_immediate() {
+        let mut computer = Computer::parse("1101,4,3,4,33");
+        computer.step();
+        assert_eq!(computer.memory[4], 7);
+    }
+
+    #[test]
+    fn test_multiply_instruction_indirect() {
+        let mut computer = Computer::parse("0002,4,3,4,33");
+        computer.step();
+        assert_eq!(computer.memory[4], 132);
+    }
+
+    #[test]
+    fn test_multiply_instruction_immediate() {
+        let mut computer = Computer::parse("1102,4,3,4,33");
+        computer.step();
+        assert_eq!(computer.memory[4], 12);
+    }
 }
