@@ -46,6 +46,7 @@ impl Computer {
             3 => Box::new(InputInstruction{}),
             4 => Box::new(OutputInstruction{opcode: full_opcode}),
             5 => Box::new(JumpIfTrueInstruction{opcode: full_opcode}),
+            6 => Box::new(JumpIfFalseInstruction{opcode: full_opcode}),
             99 => Box::new(TerminateInstruction{}),
             _ => panic!("Unrecognized opcode: {}", full_opcode),
         };
@@ -199,6 +200,23 @@ impl Instruction for JumpIfTrueInstruction {
     }
 }
 
+struct JumpIfFalseInstruction {
+    opcode: i32,
+}
+
+impl Instruction for JumpIfFalseInstruction {
+    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+        let operand = computer.get_and_advance(AddressingMode::get_by_index((self.opcode/100)%10));
+        let destination = computer.get_and_advance(AddressingMode::get_by_index((self.opcode/1000)%10));
+
+        if operand == 0 {
+            computer.ip = destination as usize;
+        }
+
+        Ok(true)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -277,5 +295,37 @@ mod tests {
         let result = computer.step();
         assert_eq!(result.is_err(), false);
         assert_eq!(computer.ip, 3);
+    }
+
+    #[test]
+    fn test_jump_if_false_instruction_indirect_true() {
+        let mut computer = Computer::parse("06,8,9,1,1,1,1,99,1,7");
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
+        assert_eq!(computer.ip, 3);
+    }
+
+    #[test]
+    fn test_jump_if_false_instruction_indirect_false() {
+        let mut computer = Computer::parse("06,8,9,1,1,1,1,99,0,7");
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
+        assert_eq!(computer.ip, 7);
+    }
+
+    #[test]
+    fn test_jump_if_false_instruction_immediate_true() {
+        let mut computer = Computer::parse("1106,1,7,1,1,1,1,99,1,7");
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
+        assert_eq!(computer.ip, 3);
+    }
+
+    #[test]
+    fn test_jump_if_false_instruction_immediate_false() {
+        let mut computer = Computer::parse("1106,0,7,1,1,1,1,99,1,7");
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
+        assert_eq!(computer.ip, 7);
     }
 }
