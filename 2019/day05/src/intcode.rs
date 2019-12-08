@@ -43,9 +43,10 @@ impl Computer {
         let instruction: Box<dyn Instruction> = match opcode {
             1 => Box::new(AddInstruction{opcode: full_opcode}),
             2 => Box::new(MultiplyInstruction{opcode: full_opcode}),
-            3 => Box::new(InputInstruction{opcode: full_opcode}),
+            3 => Box::new(InputInstruction{}),
             4 => Box::new(OutputInstruction{opcode: full_opcode}),
-            99 => Box::new(TerminateInstruction{opcode: full_opcode}),
+            5 => Box::new(JumpIfTrueInstruction{opcode: full_opcode}),
+            99 => Box::new(TerminateInstruction{}),
             _ => panic!("Unrecognized opcode: {}", full_opcode),
         };
 
@@ -115,7 +116,6 @@ trait Instruction {
 }
 
 struct TerminateInstruction {
-    opcode: i32,
 }
 
 impl Instruction for TerminateInstruction {
@@ -159,7 +159,6 @@ impl Instruction for MultiplyInstruction {
 }
 
 struct InputInstruction {
-    opcode: i32,
 }
 
 impl Instruction for InputInstruction {
@@ -177,7 +176,24 @@ struct OutputInstruction {
 
 impl Instruction for OutputInstruction {
     fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
-        computer.output = computer.get_and_advance(AddressingMode::Indirect);
+        computer.output = computer.get_and_advance(AddressingMode::get_by_index((self.opcode/100)%10));
+
+        Ok(true)
+    }
+}
+
+struct JumpIfTrueInstruction {
+    opcode: i32,
+}
+
+impl Instruction for JumpIfTrueInstruction {
+    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+        let operand = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 100) % 10));
+        let destination = computer.get_and_advance(AddressingMode::get_by_index((self.opcode/1000) % 10));
+
+        if operand != 0 {
+            computer.ip = destination as usize;
+        }
 
         Ok(true)
     }
@@ -226,7 +242,40 @@ mod tests {
     #[test]
     fn test_multiply_instruction_immediate() {
         let mut computer = Computer::parse("1102,4,3,4,33");
-        computer.step();
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
         assert_eq!(computer.memory[4], 12);
+    }
+
+    #[test]
+    fn test_jump_if_true_instruction_indirect_true() {
+        let mut computer = Computer::parse("05,8,9,1,1,1,1,99,1,7");
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
+        assert_eq!(computer.ip, 7);
+    }
+
+    #[test]
+    fn test_jump_if_true_instruction_indirect_false() {
+        let mut computer = Computer::parse("05,8,9,1,1,1,1,99,0,7");
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
+        assert_eq!(computer.ip, 3);
+    }
+
+    #[test]
+    fn test_jump_if_true_instruction_immediate_true() {
+        let mut computer = Computer::parse("1105,1,7,1,1,1,1,99,1,7");
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
+        assert_eq!(computer.ip, 7);
+    }
+
+    #[test]
+    fn test_jump_if_true_instruction_immediate_false() {
+        let mut computer = Computer::parse("1105,0,7,1,1,1,1,99,1,7");
+        let result = computer.step();
+        assert_eq!(result.is_err(), false);
+        assert_eq!(computer.ip, 3);
     }
 }
