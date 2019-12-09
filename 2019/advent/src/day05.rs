@@ -1,57 +1,41 @@
 use std::fs;
-use std::io;
 
 use crate::intcode::Computer;
 
-fn main() -> io::Result<()> {
+fn get_input() -> Computer {
     let contents = fs::read_to_string("resources/input.txt").unwrap();
-
-    let mut computer = Computer::parse(&contents);
-
-    part1(&computer);
-
-    part2(&computer);
-
-    Ok(())
+    Computer::parse(&contents)
 }
 
-fn part1(computer_arg: &Computer) -> Result<(), ()> {
-    let mut computer: Computer = computer_arg.clone();
+#[allow(dead_code)]
+fn part1() -> String {
+    let mut computer = get_input();
     computer.input = 2;
-    let result = computer.run();
+    computer.run().unwrap();
 
-    computer.print();
-
-    if result.is_err() {
-        return Err(());
-    }
-
-    println!("{}", computer.output);
-
-    Ok(())
+    format!("{}", computer.output)
 }
 
-fn part2(computer_arg: &Computer) -> Result<(), ()> {
-    let mut computer: Computer = computer_arg.clone();
+#[allow(dead_code)]
+fn part2() -> String {
+    let mut computer = get_input();
     computer.input = 5;
-    let result = computer.run();
-
-    computer.print();
-
-    if result.is_err() {
-        return Err(());
-    }
-
-    println!("{}", computer.output);
-
-    Ok(())
+    computer.run().unwrap();
+    format!("{}", computer.output)
 }
 
 
-fn print_vec(vec: &Vec<i32>) {
-    for i in 0..vec.len() {
-        print!("{},", vec[i]);
-    }
-    println!("");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(), "5821753");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(), "11956381");
+    }
+}

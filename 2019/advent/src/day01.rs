@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::{prelude::*, BufReader};
 
+#[allow(dead_code)]
 pub fn part1() -> Result<String, &'static str> {
     let file = File::open("resources/day01.txt").unwrap();
 
@@ -20,6 +21,7 @@ pub fn part1() -> Result<String, &'static str> {
     Ok(res)
 }
 
+#[allow(dead_code)]
 pub fn part2() -> Result<String, &'static str> {
     let file = File::open("resources/day01.txt").unwrap();
 

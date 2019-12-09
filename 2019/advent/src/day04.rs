@@ -9,6 +9,7 @@ fn get_input() -> Vec<i32> {
     parts
 }
 
+#[allow(dead_code)]
 fn part1() -> String {
     let parts = get_input();
     let lower_bound = parts[0];
@@ -25,6 +26,7 @@ fn part1() -> String {
     format!("{}", count)
 }
 
+#[allow(dead_code)]
 fn part2() -> String {
     let parts = get_input();
     let lower_bound = parts[0];

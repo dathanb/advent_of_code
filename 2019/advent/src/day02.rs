@@ -1,5 +1,5 @@
 use std::fs;
-use std::io::{self, prelude::*};
+use std::io;
 
 fn get_day02_input() -> io::Result<Vec<i32>> {
     let contents = fs::read_to_string("resources/day02.txt")?;
@@ -11,6 +11,7 @@ fn get_day02_input() -> io::Result<Vec<i32>> {
         .collect())
 }
 
+#[allow(dead_code)]
 fn part1() -> Result<String, &'static str> {
     let result = get_day02_input();
     if result.is_err() {
@@ -26,8 +27,9 @@ fn part1() -> Result<String, &'static str> {
     Ok(format!("{}", compute(&nums)))
 }
 
+#[allow(dead_code)]
 fn part2() -> Result<String, &'static str> {
-    let mut nums = get_day02_input().unwrap();
+    let nums = get_day02_input().unwrap();
     for noun in 0..nums.len() {
         for verb in 0..nums.len() {
             let mut nums = nums.to_vec();

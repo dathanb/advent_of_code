@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
-use std::io::{self, BufReader, prelude::*};
+use std::io::{BufReader, prelude::*};
 
 fn get_input() -> Vec<String> {
     let file = File::open("resources/day03.txt").unwrap();
@@ -13,6 +13,7 @@ fn get_input() -> Vec<String> {
     return line_strings;
 }
 
+#[allow(dead_code)]
 fn part1() -> String {
     let lines = get_input();
     let lines: Vec<&str> = lines.iter()
@@ -28,6 +29,7 @@ fn part1() -> String {
     format!("{}", intersection_points.map(|c| Coordinate { x: 0, y: 0 }.distance(**c)).min().unwrap())
 }
 
+#[allow(dead_code)]
 fn part2() -> String {
     let lines = get_input();
     let lines: Vec<&str> = lines.iter()

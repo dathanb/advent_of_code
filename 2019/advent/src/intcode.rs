@@ -72,6 +72,7 @@ impl Computer {
         }
     }
 
+    #[allow(dead_code)]
     pub fn print(&self) {
         println!("ip: {}", self.ip);
         println!("input: {}", self.input);
@@ -84,21 +85,9 @@ impl Computer {
     }
 }
 
-/*
-I think the Computer should expose a `run` method that runs to completion.
-It also needs an input -- for now it's a constant, so we'll just make it an i32
-It also needs an output -- for now let's just make it a single i32 value.
-
-run() just calls step() repeatedly.
-step() resolves an opcode from the value under the current instruction pointer, and calls opcode.execute(Computer)
-
-So how do we resolve that opcode?
-
-Just pattern match on the lower two digits of the opcode, and instantiate the correct opcode type.
-
-We may need to define an Opcode trait for each of these so we can just call execute()?
-*/
-
+/*********************************
+Structs
+*********************************/
 enum AddressingMode {
     Immediate,
     Indirect,
@@ -262,6 +251,9 @@ impl Instruction for EqualsInstruction {
 }
 
 
+/*********************************
+Tests
+*********************************/
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -270,59 +262,56 @@ mod tests {
     fn test_input() {
         let mut computer = Computer::parse("3,0,99");
         computer.input = 1;
-        computer.step();
+        computer.step().unwrap();
         assert_eq!(computer.memory[0], 1);
     }
 
     #[test]
     fn test_output() {
         let mut computer = Computer::parse("4,0,99");
-        computer.step();
+        computer.step().unwrap();
         assert_eq!(computer.output, 4);
     }
 
     #[test]
     fn test_add_instruction_indirect() {
         let mut computer = Computer::parse("0001,4,3,4,33");
-        computer.step();
+        computer.step().unwrap();
         assert_eq!(computer.memory[4], 37);
     }
 
     #[test]
     fn test_add_instruction_immediate() {
         let mut computer = Computer::parse("1101,4,3,4,33");
-        computer.step();
+        computer.step().unwrap();
         assert_eq!(computer.memory[4], 7);
     }
 
     #[test]
     fn test_multiply_instruction_indirect() {
         let mut computer = Computer::parse("0002,4,3,4,33");
-        computer.step();
+        computer.step().unwrap();
         assert_eq!(computer.memory[4], 132);
     }
 
     #[test]
     fn test_multiply_instruction_immediate() {
         let mut computer = Computer::parse("1102,4,3,4,33");
-        let result = computer.step();
-        assert_eq!(result.is_err(), false);
+        computer.step().unwrap();
         assert_eq!(computer.memory[4], 12);
     }
 
     #[test]
     fn test_jump_if_true_instruction_indirect_true() {
         let mut computer = Computer::parse("05,8,9,1,1,1,1,99,1,7");
-        let result = computer.step();
-        assert_eq!(result.is_err(), false);
+        computer.step().unwrap();
         assert_eq!(computer.ip, 7);
     }
 
     #[test]
     fn test_jump_if_true_instruction_indirect_false() {
         let mut computer = Computer::parse("05,8,9,1,1,1,1,99,0,7");
-        let result = computer.step();
-        assert_eq!(result.is_err(), false);
+        computer.step().unwrap();
         assert_eq!(computer.ip, 3);
     }
 
