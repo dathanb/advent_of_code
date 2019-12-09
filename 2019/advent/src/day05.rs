@@ -1,9 +1,7 @@
 use std::fs;
 use std::io;
 
-mod intcode;
-use intcode::Computer;
-
+use crate::intcode::Computer;
 
 fn main() -> io::Result<()> {
     let contents = fs::read_to_string("resources/input.txt").unwrap();

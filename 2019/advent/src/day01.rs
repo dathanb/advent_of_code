@@ -1,16 +1,8 @@
 use std::fs::File;
-use std::io::{self, prelude::*, BufReader};
+use std::io::{prelude::*, BufReader};
 
-fn main() -> io::Result<()> {
-    part1();
-
-    part2();
-
-    Ok(())
-}
-
-fn part1() -> io::Result<()> {
-    let file = File::open("resources/input.txt").unwrap();
+pub fn part1() -> Result<String, &'static str> {
+    let file = File::open("resources/day01.txt").unwrap();
 
     let reader = BufReader::new(file);
 
@@ -23,13 +15,13 @@ fn part1() -> io::Result<()> {
         total += weight;
     }
 
-    println!("{}", total);
+    let res = format!("{}", total);
 
-    Ok(())
+    Ok(res)
 }
 
-fn part2() -> io::Result<()> {
-    let file = File::open("resources/input.txt").unwrap();
+pub fn part2() -> Result<String, &'static str> {
+    let file = File::open("resources/day01.txt").unwrap();
 
     let reader = BufReader::new(file);
 
@@ -48,7 +40,24 @@ fn part2() -> io::Result<()> {
         }
     }
 
-    println!("{}", total);
+    let res = format!("{}", total);
 
-    Ok(())
+    Ok(res)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part1() {
+        let res = part1().unwrap();
+        assert_eq!(res, "3331523");
+    }
+
+    #[test]
+    fn test_part2() {
+        let res = part2().unwrap();
+        assert_eq!(res, "4994396");
+    }
 }
