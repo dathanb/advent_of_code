@@ -97,10 +97,6 @@ impl Computer {
         println!("input: {:?}", self.input);
         println!("output: {:?}", self.output);
         println!("Memory: {:?}", self.memory);
-//        for i in 0..self.memory.len() {
-//            print!("{},", self.memory[i]);
-//        }
-//        println!();
     }
 }
 
