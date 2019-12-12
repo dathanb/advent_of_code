@@ -14,8 +14,66 @@ fn part1() -> Result<String, String> {
 }
 
 fn compute_part1(computer: &Computer) -> Result<String, String> {
+    // let's do this the super naive way:
+    let mut max = -1;
 
-    Err(String::from("Not yet implemented"))
+    for a_input in 0..=4 {
+        let mut a_computer = computer.clone();
+        a_computer.input.push(a_input);
+        a_computer.input.push(0);
+        a_computer.run()?;
+        let a_output = a_computer.output[0];
+
+        for b_input in 0..=4 {
+            if b_input == a_input {
+                continue;
+            }
+            let mut b_computer = computer.clone();
+            b_computer.input.push(b_input);
+            b_computer.input.push(a_output);
+            b_computer.run()?;
+            let b_output = b_computer.output[0];
+
+            for c_input in 0..=4 {
+                if c_input == a_input || c_input == b_input {
+                    continue;
+                }
+                let mut c_computer = computer.clone();
+                c_computer.input.push(c_input);
+                c_computer.input.push(b_output);
+                c_computer.run()?;
+                let c_output = c_computer.output[0];
+
+                for d_input in 0..=4 {
+                    if d_input == a_input || d_input == b_input || d_input == c_input {
+                        continue;
+                    }
+                    let mut d_computer = computer.clone();
+                    d_computer.input.push(d_input);
+                    d_computer.input.push(c_output);
+                    d_computer.run()?;
+                    let d_output = d_computer.output[0];
+
+                    for e_input in 0..=4 {
+                        if e_input == a_input || e_input == b_input || e_input == c_input || e_input == d_input {
+                            continue;
+                        }
+                        let mut e_computer = computer.clone();
+                        e_computer.input.push(e_input);
+                        e_computer.input.push(d_output);
+                        e_computer.run()?;
+                        let e_output = e_computer.output[0];
+
+                        if e_output > max {
+                            max = e_output;
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+    Ok(format!("{}", max))
 }
 
 fn get_input() -> io::Result<Computer> {
@@ -53,5 +111,11 @@ mod tests {
         let computer= Computer::parse(input);
         let actual_output = compute_part1(&computer).unwrap();
         assert_eq!(actual_output, expected_output);
+    }
+
+    #[test]
+    fn test_part1_real_input() {
+        let actual_output = part1().unwrap();
+        assert_eq!(actual_output, "65464");
     }
 }
