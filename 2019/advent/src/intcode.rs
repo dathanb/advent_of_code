@@ -81,7 +81,7 @@ impl Computer {
         self.input.push(input);
     }
 
-    pub fn dequeue_input(&mut self) -> Option<i32> {
+    fn dequeue_input(&mut self) -> Option<i32> {
         let input = match self.input.get(0) {
             Some(n) => *n,
             None => return None,
