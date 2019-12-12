@@ -2,7 +2,7 @@
 pub struct Computer {
     memory: Vec<i32>,
     ip: usize,
-    pub input: Vec<i32>,
+    input: Vec<i32>,
     pub output: Vec<i32>,
 }
 
@@ -70,6 +70,15 @@ impl Computer {
             AddressingMode::Immediate => n,
             AddressingMode::Indirect => self.memory[n as usize],
         }
+    }
+
+    /**
+    Enqueue input to the computer.
+
+    As the name suggests, the computer's input is a FIFO queue, and this adds a new input onto the end of the queue.
+    */
+    pub fn enqueue_input(&mut self, input: i32) {
+        self.input.push(input);
     }
 
     pub fn dequeue_input(&mut self) -> Option<i32> {

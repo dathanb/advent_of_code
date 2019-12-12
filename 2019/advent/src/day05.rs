@@ -10,7 +10,7 @@ fn get_input() -> Computer {
 #[allow(dead_code)]
 fn part1() -> String {
     let mut computer = get_input();
-    computer.input.push(2);
+    computer.enqueue_input(2);
     computer.run().unwrap();
 
     format!("{:?}", computer.output.last().unwrap())
@@ -19,7 +19,7 @@ fn part1() -> String {
 #[allow(dead_code)]
 fn part2() -> String {
     let mut computer = get_input();
-    computer.input.push(5);
+    computer.enqueue_input(5);
     computer.run().unwrap();
     format!("{:?}", computer.output.last().unwrap())
 }

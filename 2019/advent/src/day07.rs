@@ -19,8 +19,8 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
 
     for a_input in 0..=4 {
         let mut a_computer = computer.clone();
-        a_computer.input.push(a_input);
-        a_computer.input.push(0);
+        a_computer.enqueue_input(a_input);
+        a_computer.enqueue_input(0);
         a_computer.run()?;
         let a_output = a_computer.output[0];
 
@@ -29,8 +29,8 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
                 continue;
             }
             let mut b_computer = computer.clone();
-            b_computer.input.push(b_input);
-            b_computer.input.push(a_output);
+            b_computer.enqueue_input(b_input);
+            b_computer.enqueue_input(a_output);
             b_computer.run()?;
             let b_output = b_computer.output[0];
 
@@ -39,8 +39,8 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
                     continue;
                 }
                 let mut c_computer = computer.clone();
-                c_computer.input.push(c_input);
-                c_computer.input.push(b_output);
+                c_computer.enqueue_input(c_input);
+                c_computer.enqueue_input(b_output);
                 c_computer.run()?;
                 let c_output = c_computer.output[0];
 
@@ -49,8 +49,8 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
                         continue;
                     }
                     let mut d_computer = computer.clone();
-                    d_computer.input.push(d_input);
-                    d_computer.input.push(c_output);
+                    d_computer.enqueue_input(d_input);
+                    d_computer.enqueue_input(c_output);
                     d_computer.run()?;
                     let d_output = d_computer.output[0];
 
@@ -59,8 +59,8 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
                             continue;
                         }
                         let mut e_computer = computer.clone();
-                        e_computer.input.push(e_input);
-                        e_computer.input.push(d_output);
+                        e_computer.enqueue_input(e_input);
+                        e_computer.enqueue_input(d_output);
                         e_computer.run()?;
                         let e_output = e_computer.output[0];
 
