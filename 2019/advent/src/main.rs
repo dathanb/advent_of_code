@@ -5,6 +5,7 @@ mod day04;
 mod day05;
 mod intcode;
 mod day06;
+mod day07;
 
 fn main() {
 }

@@ -136,6 +136,6 @@ mod tests {
     #[test]
     fn test_part2() {
         let value = part2().unwrap();
-        assert_eq!(value, "1");
+        assert_eq!(value, "439");
     }
 }

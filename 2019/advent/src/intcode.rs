@@ -2,8 +2,8 @@
 pub struct Computer {
     memory: Vec<i32>,
     ip: usize,
-    pub input: i32,
-    pub output: i32,
+    pub input: Vec<i32>,
+    pub output: Vec<i32>,
 }
 
 impl Computer {
@@ -15,7 +15,7 @@ impl Computer {
             .map(|n| n.unwrap())
             .collect();
 
-        Computer { memory: nums, ip: 0, input: 0, output: 0 }
+        Computer { memory: nums, ip: 0, input: vec![], output: vec![] }
     }
 
     pub fn run(&mut self) -> Result<(), &'static str> {
@@ -72,16 +72,26 @@ impl Computer {
         }
     }
 
+    pub fn pop_input(&mut self) -> Option<i32> {
+        let input = match self.input.get(0) {
+            Some(n) => *n,
+            None => return None,
+        };
+        self.input.remove(0);
+
+        Some(input)
+    }
+
     #[allow(dead_code)]
     pub fn print(&self) {
         println!("ip: {}", self.ip);
-        println!("input: {}", self.input);
-        println!("output: {}", self.output);
-        print!("Memory: ");
-        for i in 0..self.memory.len() {
-            print!("{},", self.memory[i]);
-        }
-        println!();
+        println!("input: {:?}", self.input);
+        println!("output: {:?}", self.output);
+        println!("Memory: {:?}", self.memory);
+//        for i in 0..self.memory.len() {
+//            print!("{},", self.memory[i]);
+//        }
+//        println!();
     }
 }
 
@@ -154,7 +164,12 @@ struct InputInstruction {}
 impl Instruction for InputInstruction {
     fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
         let operand1 = computer.get_and_advance(AddressingMode::Immediate);
-        computer.memory[operand1 as usize] = computer.input;
+        let input = match computer.pop_input() {
+            Some(n) => n,
+            None => return Err("Tried to dequeue input with no input present"),
+        };
+        computer.memory[operand1 as usize] = input;
+
 
         Ok(true)
     }
@@ -166,7 +181,8 @@ struct OutputInstruction {
 
 impl Instruction for OutputInstruction {
     fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
-        computer.output = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 100) % 10));
+        let i = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 100) % 10));
+        computer.output.push(i);
 
         Ok(true)
     }
@@ -261,7 +277,7 @@ mod tests {
     #[test]
     fn test_input() {
         let mut computer = Computer::parse("3,0,99");
-        computer.input = 1;
+        computer.input.push(1);
         computer.step().unwrap();
         assert_eq!(computer.memory[0], 1);
     }
@@ -270,7 +286,8 @@ mod tests {
     fn test_output() {
         let mut computer = Computer::parse("4,0,99");
         computer.step().unwrap();
-        assert_eq!(computer.output, 4);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 4);
     }
 
     #[test]
@@ -382,41 +399,47 @@ mod tests {
     #[test]
     fn smoke_test_computer() {
         let mut computer = Computer::parse("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9");
-        computer.input = 0;
+        computer.input.push(0);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(0, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 0);
 
         let mut computer = Computer::parse("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9");
-        computer.input = 1;
+        computer.input.push(1);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(1, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 1);
 
         let mut computer = Computer::parse("3,3,1105,-1,9,1101,0,0,12,4,12,99,1");
-        computer.input = 0;
+        computer.input.push(0);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(0, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 0);
 
         let mut computer = Computer::parse("3,3,1105,-1,9,1101,0,0,12,4,12,99,1");
-        computer.input = 1;
+        computer.input.push(1);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(1, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 1);
 
 //         - Using position mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
         let mut computer = Computer::parse("3,9,8,9,10,9,4,9,99,-1,8");
-        computer.input = 1;
+        computer.input.push(1);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(0, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 0);
 
         let mut computer = Computer::parse("3,9,8,9,10,9,4,9,99,-1,8");
-        computer.input = 8;
+        computer.input.push(8);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(1, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 1);
 
 //                let mut computer =
 //        3,9,7,9,10,9,4,9,99,-1,8 - Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
@@ -425,21 +448,24 @@ mod tests {
 
 
         let mut computer = Computer::parse("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
-        computer.input = 1;
+        computer.input.push(1);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(999, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 999);
 
         let mut computer = Computer::parse("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
-        computer.input = 8;
+        computer.input.push(8);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(1000, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 1000);
 
         let mut computer = Computer::parse("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
-        computer.input = 9;
+        computer.input.push(9);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(1001, computer.output);
+        assert_eq!(computer.output.len(), 1);
+        assert_eq!(computer.output[0], 1001);
     }
 }
