@@ -15,7 +15,7 @@ impl Computer {
             .map(|n| n.unwrap())
             .collect();
 
-        Computer { memory: nums, ip: 0, input: vec![], output: vec![] }
+        Computer { memory: nums, ip: 0, input: vec![], output: vec![], status: ComputerStatus::Suspended }
     }
 
     pub fn run(&mut self) -> Result<(), String> {
@@ -98,6 +98,17 @@ impl Computer {
         println!("output: {:?}", self.output);
         println!("Memory: {:?}", self.memory);
     }
+}
+
+/**
+ComputerStatus describes the current status of the computer.
+- Suspended: The computer has generated output and suspended, but is capable of running more.
+- Terminated: The computer has run to completion.
+*/
+#[derive(Clone)]
+enum ComputerStatus {
+    Suspended,
+    Terminated,
 }
 
 /*********************************
