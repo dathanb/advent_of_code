@@ -1,35 +1,35 @@
 use std::fs;
-use std::io::{self, prelude::*};
+use std::io;
 
-
-fn main() -> io::Result<()> {
-    let contents = fs::read_to_string("resources/input.txt").unwrap();
-    let nums: Vec<i32> = contents.split(",")
+fn get_day02_input() -> io::Result<Vec<i32>> {
+    let contents = fs::read_to_string("resources/day02.txt")?;
+    Ok(contents.split(",")
         .map(|n| n.trim())
         .map(|n| n.parse::<i32>())
         .filter(|n| n.is_ok())
         .map(|n| n.unwrap())
-        .collect();
-
-    part1(&nums).unwrap();
-
-    part2(&nums).unwrap();
-
-    Ok(())
+        .collect())
 }
 
-fn part1(nums: &Vec<i32>) -> io::Result<()> {
-    let mut nums = nums.to_vec();
+#[allow(dead_code)]
+fn part1() -> Result<String, &'static str> {
+    let result = get_day02_input();
+    if result.is_err() {
+        return Err("Error getting input");
+    }
+    let mut nums = result.unwrap();
 
     nums[1] = 12;
     nums[2] = 2;
 
     println!("{}", compute(&nums));
 
-    Ok(())
+    Ok(format!("{}", compute(&nums)))
 }
 
-fn part2(nums: &Vec<i32>) -> io::Result<()> {
+#[allow(dead_code)]
+fn part2() -> Result<String, &'static str> {
+    let nums = get_day02_input().unwrap();
     for noun in 0..nums.len() {
         for verb in 0..nums.len() {
             let mut nums = nums.to_vec();
@@ -37,12 +37,12 @@ fn part2(nums: &Vec<i32>) -> io::Result<()> {
             nums[2] = verb as i32;
             let result= compute(&nums);
             if result == 19690720 {
-                println!("{}", 100 * noun + verb);
+                return Ok(format!("{}", 100 * noun + verb));
             }
         }
     }
 
-    Ok(())
+    Err("Answer not found")
 }
 
 fn compute(initial_memory: &Vec<i32>) -> i32 {
@@ -68,8 +68,6 @@ fn compute(initial_memory: &Vec<i32>) -> i32 {
         } else {
             panic!("Unexpected value!");
         }
-//        println!("IP: {}\topcode: {}\top1idx: {}\top1: {}\top2idx: {}\top2: {}\tridx: {}\tresult: {}", i, opcode,
-//                 operand1_index, operand1, operand2_index, operand2, result_index, result);
         memory[result_index as usize] = result;
 
         i += 4;
@@ -79,10 +77,18 @@ fn compute(initial_memory: &Vec<i32>) -> i32 {
     memory[0]
 }
 
-fn print_vec(vec: &Vec<i32>) {
-    for i in 0..vec.len() {
-        print!("{},", vec[i]);
-    }
-    println!("");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
+    #[test]
+    fn test_part1() {
+        let res = part1().unwrap();
+        assert_eq!(res, "2842648");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2().unwrap(), "9074");
+    }
+}

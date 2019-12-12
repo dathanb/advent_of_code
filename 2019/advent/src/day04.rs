@@ -1,20 +1,20 @@
 use std::fs;
 
-fn main() {
-    let contents = fs::read_to_string("resources/input.txt").unwrap();
+fn get_input() -> Vec<i32> {
+    let contents = fs::read_to_string("resources/day04.txt").unwrap();
     let parts: Vec<i32> = contents.split("-")
         .map(|s| s.parse::<i32>().unwrap())
         .collect();
 
+    parts
+}
+
+#[allow(dead_code)]
+fn part1() -> String {
+    let parts = get_input();
     let lower_bound = parts[0];
     let upper_bound = parts[1];
 
-    part1(lower_bound, upper_bound);
-
-    part2(lower_bound, upper_bound);
-}
-
-fn part1(lower_bound: i32, upper_bound: i32) {
     let mut count = 0;
 
     for n in lower_bound..upper_bound + 1 {
@@ -23,10 +23,15 @@ fn part1(lower_bound: i32, upper_bound: i32) {
         }
     }
 
-    println!("{}", count);
+    format!("{}", count)
 }
 
-fn part2(lower_bound: i32, upper_bound: i32) {
+#[allow(dead_code)]
+fn part2() -> String {
+    let parts = get_input();
+    let lower_bound = parts[0];
+    let upper_bound = parts[1];
+
     let mut count = 0;
     for n in lower_bound..upper_bound + 1 {
         if has_six_digits(n) && has_two_digit_only_repeat(n) && is_non_decreasing(n) {
@@ -34,7 +39,7 @@ fn part2(lower_bound: i32, upper_bound: i32) {
         }
     }
 
-    println!("{}", count);
+    format!("{}", count)
 }
 
 
@@ -96,3 +101,17 @@ fn get_digits(n: i32) -> Vec<i32> {
     digits
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(), "1610");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(), "1104");
+    }
+}

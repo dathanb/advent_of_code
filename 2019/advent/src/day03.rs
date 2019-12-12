@@ -1,25 +1,24 @@
 use std::collections::{HashMap, HashSet};
 use std::fs::File;
-use std::io::{self, BufReader, prelude::*};
+use std::io::{BufReader, prelude::*};
 
-fn main() -> io::Result<()> {
-    let file = File::open("resources/input.txt").unwrap();
+fn get_input() -> Vec<String> {
+    let file = File::open("resources/day03.txt").unwrap();
     let reader = BufReader::new(file);
 
     let line_strings: Vec<String> = reader.lines()
         .map(|l| l.unwrap())
         .collect();
-    let lines: Vec<&str> = line_strings.iter()
-        .map(String::as_str).collect();
 
-    part1(&lines);
-
-    part2(&lines);
-
-    Ok(())
+    return line_strings;
 }
 
-fn part1(lines: &Vec<&str>) {
+#[allow(dead_code)]
+fn part1() -> String {
+    let lines = get_input();
+    let lines: Vec<&str> = lines.iter()
+        .map(String::as_str).collect();
+
     let first_wire_points = get_point_set(lines[0]);
     let second_wire_points = get_point_set(lines[1]);
 
@@ -27,10 +26,14 @@ fn part1(lines: &Vec<&str>) {
     let second_wire_coordinates: HashSet<&Coordinate> = second_wire_points.keys().collect();
     let intersection_points = first_wire_coordinates.intersection(&second_wire_coordinates);
 
-    println!("{}", intersection_points.map(|c| Coordinate { x: 0, y: 0 }.distance(**c)).min().unwrap());
+    format!("{}", intersection_points.map(|c| Coordinate { x: 0, y: 0 }.distance(**c)).min().unwrap())
 }
 
-fn part2(lines: &Vec<&str>) {
+#[allow(dead_code)]
+fn part2() -> String {
+    let lines = get_input();
+    let lines: Vec<&str> = lines.iter()
+        .map(String::as_str).collect();
     let first_wire = get_point_set(lines[0]);
     let second_wire = get_point_set(lines[1]);
 
@@ -42,7 +45,7 @@ fn part2(lines: &Vec<&str>) {
             min_distance = distance;
         }
     }
-    println!("{}", min_distance);
+    format!("{}", min_distance)
 }
 
 fn get_point_set(line: &str) -> HashMap<Coordinate, i64> {
@@ -122,4 +125,20 @@ impl<'a> Movement<'a> {
         units
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(), "2180");
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(), "112316");
+    }
+}
+
 

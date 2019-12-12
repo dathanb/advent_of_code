@@ -1,5 +1,5 @@
 [package]
-name = "day02"
+name = "advent"
 version = "0.1.0"
 authors = ["Dathan Bennett <dathanb@netflix.com>"]
 edition = "2018"
