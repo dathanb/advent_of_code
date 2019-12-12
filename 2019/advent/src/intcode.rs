@@ -72,7 +72,7 @@ impl Computer {
         }
     }
 
-    pub fn pop_input(&mut self) -> Option<i32> {
+    pub fn dequeue_input(&mut self) -> Option<i32> {
         let input = match self.input.get(0) {
             Some(n) => *n,
             None => return None,
@@ -164,7 +164,7 @@ struct InputInstruction {}
 impl Instruction for InputInstruction {
     fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
         let operand1 = computer.get_and_advance(AddressingMode::Immediate);
-        let input = match computer.pop_input() {
+        let input = match computer.dequeue_input() {
             Some(n) => n,
             None => return Err("Tried to dequeue input with no input present"),
         };
