@@ -18,12 +18,12 @@ impl Computer {
         Computer { memory: nums, ip: 0, input: vec![], output: vec![] }
     }
 
-    pub fn run(&mut self) -> Result<(), &'static str> {
+    pub fn run(&mut self) -> Result<(), String> {
         let mut keep_going = true;
         while keep_going {
             match self.step() {
                 Ok(n) => keep_going = n,
-                Err(str) => return Err(str)
+                Err(str) => return Err(String::from(str))
             };
         }
 
