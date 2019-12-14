@@ -6,6 +6,7 @@ mod day05;
 mod intcode;
 mod day06;
 mod day07;
+mod permute;
 
 fn main() {
 }
