@@ -38,35 +38,29 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
     let mut max = -1;
     computer.print();
 
+    let num_computers = 5;
+    let initial_input = 0;
+
     let possible_phase_settings = vec![0,1,2,3,4];
+
     for settings in permute::permute(possible_phase_settings) {
-        let mut a_computer = computer.clone();
-        a_computer.enqueue_input(settings[0]);
-        a_computer.enqueue_input(0);
-        a_computer.run_no_suspend()?;
+        let mut computers:Vec<Computer> = Vec::with_capacity(num_computers);
+        for _ in 0..num_computers {
+            computers.push(computer.clone());
+        }
 
-        let mut b_computer = computer.clone();
-        b_computer.enqueue_input(settings[1]);
-        b_computer.enqueue_input(a_computer.output);
-        b_computer.run_no_suspend()?;
+        let mut input = initial_input;
 
-        let mut c_computer = computer.clone();
-        c_computer.enqueue_input(settings[2]);
-        c_computer.enqueue_input(b_computer.output);
-        c_computer.run_no_suspend()?;
+        for i in 0..num_computers {
+            computers[i].enqueue_input(settings[i]);
+            computers[i].enqueue_input(input);
+            computers[i].run_no_suspend()?;
+            input = computers[i].output;
+        }
 
-        let mut d_computer = computer.clone();
-        d_computer.enqueue_input(settings[3]);
-        d_computer.enqueue_input(c_computer.output);
-        d_computer.run_no_suspend()?;
-
-        let mut e_computer = computer.clone();
-        e_computer.enqueue_input(settings[4]);
-        e_computer.enqueue_input(d_computer.output);
-        e_computer.run_no_suspend()?;
-
-        if e_computer.output > max {
-            max = e_computer.output;
+        // at this point input has the output from the final computer execution
+        if input > max {
+            max = input;
         }
     }
 

@@ -11,7 +11,7 @@ pub fn permute(input: Vec<i32>) -> Vec<Vec<i32>> {
     // c represents the counters for each stack frame from the recursive Heap's algo
     let mut c: Vec<usize> = Vec::with_capacity(input.len());
 
-    for i in 0..input.len() {
+    for _ in 0..input.len() {
         c.push(0);
     }
 
