@@ -22,8 +22,6 @@ fn part1() -> Result<String, &'static str> {
     nums[1] = 12;
     nums[2] = 2;
 
-    println!("{}", compute(&nums));
-
     Ok(format!("{}", compute(&nums)))
 }
 

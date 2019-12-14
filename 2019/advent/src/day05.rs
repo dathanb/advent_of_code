@@ -10,18 +10,18 @@ fn get_input() -> Computer {
 #[allow(dead_code)]
 fn part1() -> String {
     let mut computer = get_input();
-    computer.input.push(2);
-    computer.run().unwrap();
+    computer.enqueue_input(2);
+    computer.run_no_suspend().unwrap();
 
-    format!("{:?}", computer.output.last().unwrap())
+    format!("{:?}", computer.output)
 }
 
 #[allow(dead_code)]
 fn part2() -> String {
     let mut computer = get_input();
-    computer.input.push(5);
-    computer.run().unwrap();
-    format!("{:?}", computer.output.last().unwrap())
+    computer.enqueue_input(5);
+    computer.run_no_suspend().unwrap();
+    format!("{:?}", computer.output)
 }
 
 

@@ -1,7 +1,8 @@
 use std::io;
 use std::fs;
 
-use crate::intcode::{Computer};
+use crate::intcode::{Computer, ComputerStatus};
+use crate::permute;
 
 #[allow(dead_code)]
 fn part1() -> Result<String, String> {
@@ -13,66 +14,87 @@ fn part1() -> Result<String, String> {
     return compute_part1(&computer);
 }
 
+#[allow(dead_code)]
+fn part2() -> Result<String, String> {
+    let computer = match get_input() {
+        Ok(c) => c,
+        Err(n) => return Err(format!("{}", n)),
+    };
+
+    return compute_part2(&computer);
+}
+
 fn compute_part1(computer: &Computer) -> Result<String, String> {
     // let's do this the super naive way:
     let mut max = -1;
+    computer.print();
 
-    for a_input in 0..=4 {
-        let mut a_computer = computer.clone();
-        a_computer.input.push(a_input);
-        a_computer.input.push(0);
-        a_computer.run()?;
-        let a_output = a_computer.output[0];
+    let num_computers = 5;
+    let initial_input = 0;
 
-        for b_input in 0..=4 {
-            if b_input == a_input {
-                continue;
-            }
-            let mut b_computer = computer.clone();
-            b_computer.input.push(b_input);
-            b_computer.input.push(a_output);
-            b_computer.run()?;
-            let b_output = b_computer.output[0];
+    let possible_phase_settings = vec![0,1,2,3,4];
 
-            for c_input in 0..=4 {
-                if c_input == a_input || c_input == b_input {
-                    continue;
-                }
-                let mut c_computer = computer.clone();
-                c_computer.input.push(c_input);
-                c_computer.input.push(b_output);
-                c_computer.run()?;
-                let c_output = c_computer.output[0];
+    for settings in permute::permute(possible_phase_settings) {
+        let mut computers:Vec<Computer> = Vec::with_capacity(num_computers);
+        for _ in 0..num_computers {
+            computers.push(computer.clone());
+        }
 
-                for d_input in 0..=4 {
-                    if d_input == a_input || d_input == b_input || d_input == c_input {
-                        continue;
-                    }
-                    let mut d_computer = computer.clone();
-                    d_computer.input.push(d_input);
-                    d_computer.input.push(c_output);
-                    d_computer.run()?;
-                    let d_output = d_computer.output[0];
+        let mut input = initial_input;
 
-                    for e_input in 0..=4 {
-                        if e_input == a_input || e_input == b_input || e_input == c_input || e_input == d_input {
-                            continue;
-                        }
-                        let mut e_computer = computer.clone();
-                        e_computer.input.push(e_input);
-                        e_computer.input.push(d_output);
-                        e_computer.run()?;
-                        let e_output = e_computer.output[0];
+        for i in 0..num_computers {
+            computers[i].enqueue_input(settings[i]);
+            computers[i].enqueue_input(input);
+            computers[i].run_no_suspend()?;
+            input = computers[i].output;
+        }
 
-                        if e_output > max {
-                            max = e_output;
-                        }
-
-                    }
-                }
-            }
+        // at this point input has the output from the final computer execution
+        if input > max {
+            max = input;
         }
     }
+
+    Ok(format!("{}", max))
+}
+
+fn compute_part2(computer: &Computer) -> Result<String, String> {
+    // let's do this the super naive way:
+    let mut max = -1;
+    computer.print();
+
+    let num_computers = 5;
+    let initial_input = 0;
+
+    let possible_phase_settings = vec![5,6,7,8,9];
+
+    for settings in permute::permute(possible_phase_settings) {
+        let mut computers:Vec<Computer> = Vec::with_capacity(num_computers);
+        for _ in 0..num_computers {
+            computers.push(computer.clone());
+        }
+
+        let mut input = initial_input;
+        let mut status = ComputerStatus::Running;
+
+        for i in 0..num_computers {
+            computers[i].enqueue_input(settings[i]);
+        }
+
+        while status != ComputerStatus::Terminated {
+            for i in 0..num_computers {
+                computers[i].enqueue_input(input);
+                status = computers[i].run()?;
+                input = computers[i].output;
+            }
+        }
+
+        // at this point input has the output from the final computer execution
+        if input > max {
+            max = input;
+        }
+    }
+
     Ok(format!("{}", max))
 }
 
@@ -80,7 +102,6 @@ fn get_input() -> io::Result<Computer> {
     let contents = fs::read_to_string("resources/day07.txt")?;
     Ok(Computer::parse(&contents))
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -117,5 +138,30 @@ mod tests {
     fn test_part1_real_input() {
         let actual_output = part1().unwrap();
         assert_eq!(actual_output, "65464");
+    }
+
+    #[test]
+    fn test_part2_input1() {
+        let input = "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5";
+        let expected_output = "139629729";
+        let computer = Computer::parse(input);
+        let actual_output = compute_part2(&computer).unwrap();
+        assert_eq!(actual_output, expected_output);
+    }
+
+    #[test]
+    fn test_part2_input2() {
+        let input = "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10";
+        let expected_output = "18216";
+        let computer = Computer::parse(input);
+        let actual_output = compute_part2(&computer).unwrap();
+        assert_eq!(actual_output, expected_output);
+    }
+
+    #[test]
+    fn test_part2() {
+        let expected_output = String::from("1518124");
+        let actual_output = part2().unwrap();
+        assert_eq!(actual_output, expected_output);
     }
 }
