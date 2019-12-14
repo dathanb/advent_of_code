@@ -11,17 +11,17 @@ fn get_input() -> Computer {
 fn part1() -> String {
     let mut computer = get_input();
     computer.enqueue_input(2);
-    computer.run().unwrap();
+    computer.run_no_suspend().unwrap();
 
-    format!("{:?}", computer.output.last().unwrap())
+    format!("{:?}", computer.output)
 }
 
 #[allow(dead_code)]
 fn part2() -> String {
     let mut computer = get_input();
     computer.enqueue_input(5);
-    computer.run().unwrap();
-    format!("{:?}", computer.output.last().unwrap())
+    computer.run_no_suspend().unwrap();
+    format!("{:?}", computer.output)
 }
 
 

@@ -3,7 +3,8 @@ pub struct Computer {
     memory: Vec<i32>,
     ip: usize,
     input: Vec<i32>,
-    pub output: Vec<i32>,
+    pub output: i32,
+    status: ComputerStatus,
 }
 
 impl Computer {
@@ -15,19 +16,43 @@ impl Computer {
             .map(|n| n.unwrap())
             .collect();
 
-        Computer { memory: nums, ip: 0, input: vec![], output: vec![], status: ComputerStatus::Suspended }
+        Computer { memory: nums, ip: 0, input: vec![], output: 0, status: ComputerStatus::Suspended }
     }
 
-    pub fn run(&mut self) -> Result<(), String> {
+    /**
+    Triggers execution of the computer. If the computer generates output, it will set the output field to the
+    relevant value, set its status to ComputerStatus::Suspended, and return Ok(ComputerStatus::Suspended).
+
+    Subsequent calls to run() will pick up where the computer suspended. If more output is generated, it will suspend
+    again at that point.
+
+    If it runs to the terminate instruction, it returns Ok(ComputerStatus::Terminated)
+    */
+    pub fn run(&mut self) -> Result<ComputerStatus, String> {
         let mut keep_going = true;
         while keep_going {
             match self.step() {
-                Ok(n) => keep_going = n,
+                Ok(n) => keep_going = n == ComputerStatus::Running,
                 Err(str) => return Err(String::from(str))
             };
         }
 
-        Ok(())
+        Ok(self.status)
+    }
+
+    /**
+    Triggers continuous execution of the computer, without blocking on output.
+    */
+    pub fn run_no_suspend(&mut self) -> Result<ComputerStatus, String> {
+        let mut keep_going = true;
+        while keep_going {
+            match self.step() {
+                Ok(n) => keep_going = n != ComputerStatus::Terminated,
+                Err(str) => return Err(String::from(str))
+            };
+        }
+
+        Ok(self.status)
     }
 
     /**
@@ -37,7 +62,7 @@ impl Computer {
     run: true if program execution can continue, false if the program has run to completion.
     Returns Err with a string value on error
     */
-    fn step(&mut self) -> Result<bool, &'static str> {
+    fn step(&mut self) -> Result<ComputerStatus, String> {
         let full_opcode = self.get_and_advance(AddressingMode::Immediate);
         let opcode = full_opcode % 100;
         let instruction: Box<dyn Instruction> = match opcode {
@@ -53,7 +78,9 @@ impl Computer {
             _ => panic!("Unrecognized opcode: {}", full_opcode),
         };
 
-        instruction.execute(self)
+        let result = instruction.execute(self)?;
+        self.status = result;
+        Ok(result)
     }
 
     /**
@@ -105,8 +132,9 @@ ComputerStatus describes the current status of the computer.
 - Suspended: The computer has generated output and suspended, but is capable of running more.
 - Terminated: The computer has run to completion.
 */
-#[derive(Clone)]
-enum ComputerStatus {
+#[derive(Clone, PartialEq, Copy)]
+pub enum ComputerStatus {
+    Running,
     Suspended,
     Terminated,
 }
@@ -130,14 +158,14 @@ impl AddressingMode {
 }
 
 trait Instruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str>;
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String>;
 }
 
 struct TerminateInstruction {}
 
 impl Instruction for TerminateInstruction {
-    fn execute(&self, _computer: &mut Computer) -> Result<bool, &'static str> {
-        Ok(false)
+    fn execute(&self, _computer: &mut Computer) -> Result<ComputerStatus, String> {
+        Ok(ComputerStatus::Terminated)
     }
 }
 
@@ -146,7 +174,7 @@ struct AddInstruction {
 }
 
 impl Instruction for AddInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String> {
         let operand1 = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 100) % 10));
         let operand2 = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 1000) % 10));
         let result_pointer = computer.get_and_advance(AddressingMode::Immediate) as usize;
@@ -154,7 +182,7 @@ impl Instruction for AddInstruction {
         let result = operand1 + operand2;
         computer.memory[result_pointer] = result;
 
-        Ok(true)
+        Ok(ComputerStatus::Running)
     }
 }
 
@@ -163,7 +191,7 @@ struct MultiplyInstruction {
 }
 
 impl Instruction for MultiplyInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String> {
         let operand1 = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 100) % 10));
         let operand2 = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 1000) % 10));
         let result_pointer = computer.get_and_advance(AddressingMode::Immediate) as usize;
@@ -171,23 +199,23 @@ impl Instruction for MultiplyInstruction {
         let result = operand1 * operand2;
         computer.memory[result_pointer] = result;
 
-        Ok(true)
+        Ok(ComputerStatus::Running)
     }
 }
 
 struct InputInstruction {}
 
 impl Instruction for InputInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String> {
         let operand1 = computer.get_and_advance(AddressingMode::Immediate);
         let input = match computer.dequeue_input() {
             Some(n) => n,
-            None => return Err("Tried to dequeue input with no input present"),
+            None => return Err(String::from("Tried to dequeue input with no input present")),
         };
         computer.memory[operand1 as usize] = input;
 
 
-        Ok(true)
+        Ok(ComputerStatus::Running)
     }
 }
 
@@ -196,11 +224,11 @@ struct OutputInstruction {
 }
 
 impl Instruction for OutputInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String> {
         let i = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 100) % 10));
-        computer.output.push(i);
+        computer.output = i;
 
-        Ok(true)
+        Ok(ComputerStatus::Suspended)
     }
 }
 
@@ -209,7 +237,7 @@ struct JumpIfTrueInstruction {
 }
 
 impl Instruction for JumpIfTrueInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String> {
         let operand = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 100) % 10));
         let destination = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 1000) % 10));
 
@@ -217,7 +245,7 @@ impl Instruction for JumpIfTrueInstruction {
             computer.ip = destination as usize;
         }
 
-        Ok(true)
+        Ok(ComputerStatus::Running)
     }
 }
 
@@ -226,7 +254,7 @@ struct JumpIfFalseInstruction {
 }
 
 impl Instruction for JumpIfFalseInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String> {
         let operand = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 100) % 10));
         let destination = computer.get_and_advance(AddressingMode::get_by_index((self.opcode / 1000) % 10));
 
@@ -234,7 +262,7 @@ impl Instruction for JumpIfFalseInstruction {
             computer.ip = destination as usize;
         }
 
-        Ok(true)
+        Ok(ComputerStatus::Running)
     }
 }
 
@@ -243,7 +271,7 @@ struct LessThanInstruction {
 }
 
 impl Instruction for LessThanInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String> {
         let mut operand_modes = self.opcode / 100;
         let operand1 = computer.get_and_advance(AddressingMode::get_by_index(operand_modes % 10));
         operand_modes /= 10;
@@ -256,7 +284,7 @@ impl Instruction for LessThanInstruction {
             computer.memory[destination as usize] = 0;
         }
 
-        Ok(true)
+        Ok(ComputerStatus::Running)
     }
 }
 
@@ -265,7 +293,7 @@ struct EqualsInstruction {
 }
 
 impl Instruction for EqualsInstruction {
-    fn execute(&self, computer: &mut Computer) -> Result<bool, &'static str> {
+    fn execute(&self, computer: &mut Computer) -> Result<ComputerStatus, String> {
         let mut operand_modes = self.opcode / 100;
         let operand1 = computer.get_and_advance(AddressingMode::get_by_index(operand_modes % 10));
         operand_modes /= 10;
@@ -278,10 +306,9 @@ impl Instruction for EqualsInstruction {
             computer.memory[destination as usize] = 0;
         }
 
-        Ok(true)
+        Ok(ComputerStatus::Running)
     }
 }
-
 
 /*********************************
 Tests
@@ -302,8 +329,7 @@ mod tests {
     fn test_output() {
         let mut computer = Computer::parse("4,0,99");
         computer.step().unwrap();
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 4);
+        assert_eq!(computer.output, 4);
     }
 
     #[test]
@@ -418,70 +444,55 @@ mod tests {
         computer.input.push(0);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 0);
+        assert_eq!(computer.output, 0);
 
         let mut computer = Computer::parse("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9");
         computer.input.push(1);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 1);
+        assert_eq!(computer.output, 1);
 
         let mut computer = Computer::parse("3,3,1105,-1,9,1101,0,0,12,4,12,99,1");
         computer.input.push(0);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 0);
+        assert_eq!(computer.output, 0);
 
         let mut computer = Computer::parse("3,3,1105,-1,9,1101,0,0,12,4,12,99,1");
         computer.input.push(1);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 1);
+        assert_eq!(computer.output, 1);
 
 //         - Using position mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
         let mut computer = Computer::parse("3,9,8,9,10,9,4,9,99,-1,8");
         computer.input.push(1);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 0);
+        assert_eq!(computer.output, 0);
 
         let mut computer = Computer::parse("3,9,8,9,10,9,4,9,99,-1,8");
         computer.input.push(8);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 1);
-
-//                let mut computer =
-//        3,9,7,9,10,9,4,9,99,-1,8 - Using position mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
-//        3,3,1108,-1,8,3,4,3,99 - Using immediate mode, consider whether the input is equal to 8; output 1 (if it is) or 0 (if it is not).
-//        3,3,1107,-1,8,3,4,3,99 - Using immediate mode, consider whether the input is less than 8; output 1 (if it is) or 0 (if it is not).
-
+        assert_eq!(computer.output, 1);
 
         let mut computer = Computer::parse("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
         computer.input.push(1);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 999);
+        assert_eq!(computer.output, 999);
 
         let mut computer = Computer::parse("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
         computer.input.push(8);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 1000);
+        assert_eq!(computer.output, 1000);
 
         let mut computer = Computer::parse("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99");
         computer.input.push(9);
         let result = computer.run();
         assert_eq!(false, result.is_err());
-        assert_eq!(computer.output.len(), 1);
-        assert_eq!(computer.output[0], 1001);
+        assert_eq!(computer.output, 1001);
     }
 }

@@ -13,6 +13,25 @@ fn part1() -> Result<String, String> {
     return compute_part1(&computer);
 }
 
+#[allow(dead_code)]
+fn part2() -> Result<String, String> {
+    /*
+    For part 2, we need to update how we think about the computers.
+    Instead of us providing static input, running the computer to completion, and collecting the output,
+    we now need the ability to treat the computers like coroutines, where we provide some input and run the computer
+    only until it produces output, and we can resume the computer at some later point.
+
+    So we'll need to update the `run` method to return Result<bool, String>, just like `step` does, where the `bool`
+    indicates whether the computer is capable of still running.
+
+    We should replace the `bool` with an enum, though, because it's not immediately clear whether true means
+    "can still run" or "has terminated".
+
+    So let's do that first -- replace the bool with an enum.
+    */
+    unimplemented!()
+}
+
 fn compute_part1(computer: &Computer) -> Result<String, String> {
     // let's do this the super naive way:
     let mut max = -1;
@@ -22,7 +41,7 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
         a_computer.enqueue_input(a_input);
         a_computer.enqueue_input(0);
         a_computer.run()?;
-        let a_output = a_computer.output[0];
+        let a_output = a_computer.output;
 
         for b_input in 0..=4 {
             if b_input == a_input {
@@ -32,7 +51,7 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
             b_computer.enqueue_input(b_input);
             b_computer.enqueue_input(a_output);
             b_computer.run()?;
-            let b_output = b_computer.output[0];
+            let b_output = b_computer.output;
 
             for c_input in 0..=4 {
                 if c_input == a_input || c_input == b_input {
@@ -42,7 +61,7 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
                 c_computer.enqueue_input(c_input);
                 c_computer.enqueue_input(b_output);
                 c_computer.run()?;
-                let c_output = c_computer.output[0];
+                let c_output = c_computer.output;
 
                 for d_input in 0..=4 {
                     if d_input == a_input || d_input == b_input || d_input == c_input {
@@ -52,7 +71,7 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
                     d_computer.enqueue_input(d_input);
                     d_computer.enqueue_input(c_output);
                     d_computer.run()?;
-                    let d_output = d_computer.output[0];
+                    let d_output = d_computer.output;
 
                     for e_input in 0..=4 {
                         if e_input == a_input || e_input == b_input || e_input == c_input || e_input == d_input {
@@ -62,7 +81,7 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
                         e_computer.enqueue_input(e_input);
                         e_computer.enqueue_input(d_output);
                         e_computer.run()?;
-                        let e_output = e_computer.output[0];
+                        let e_output = e_computer.output;
 
                         if e_output > max {
                             max = e_output;
