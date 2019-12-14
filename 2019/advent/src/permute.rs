@@ -3,7 +3,7 @@ Generate all permutations of the input using iterative implementation of Heap's 
 
 Translated from pseudocode at https://en.wikipedia.org/wiki/Heap%27s_algorithm
 */
-fn permute(input: Vec<i32>) -> Vec<Vec<i32>> {
+pub fn permute(input: Vec<i32>) -> Vec<Vec<i32>> {
     let mut accumulator: Vec<Vec<i32>> = Vec::new();
 
     let mut mutable_vec = input.clone();
@@ -16,7 +16,6 @@ fn permute(input: Vec<i32>) -> Vec<Vec<i32>> {
     }
 
     accumulator.push(input.clone());
-    println!("{:?}", accumulator);
 
     let mut i:usize = 0;
     while i < input.len() {

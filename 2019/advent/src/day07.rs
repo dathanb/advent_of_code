@@ -36,63 +36,40 @@ fn part2() -> Result<String, String> {
 fn compute_part1(computer: &Computer) -> Result<String, String> {
     // let's do this the super naive way:
     let mut max = -1;
+    computer.print();
 
-    for a_input in 0..=4 {
+    let possible_phase_settings = vec![0,1,2,3,4];
+    for settings in permute::permute(possible_phase_settings) {
         let mut a_computer = computer.clone();
-        a_computer.enqueue_input(a_input);
+        a_computer.enqueue_input(settings[0]);
         a_computer.enqueue_input(0);
-        a_computer.run()?;
-        let a_output = a_computer.output;
+        a_computer.run_no_suspend()?;
 
-        for b_input in 0..=4 {
-            if b_input == a_input {
-                continue;
-            }
-            let mut b_computer = computer.clone();
-            b_computer.enqueue_input(b_input);
-            b_computer.enqueue_input(a_output);
-            b_computer.run()?;
-            let b_output = b_computer.output;
+        let mut b_computer = computer.clone();
+        b_computer.enqueue_input(settings[1]);
+        b_computer.enqueue_input(a_computer.output);
+        b_computer.run_no_suspend()?;
 
-            for c_input in 0..=4 {
-                if c_input == a_input || c_input == b_input {
-                    continue;
-                }
-                let mut c_computer = computer.clone();
-                c_computer.enqueue_input(c_input);
-                c_computer.enqueue_input(b_output);
-                c_computer.run()?;
-                let c_output = c_computer.output;
+        let mut c_computer = computer.clone();
+        c_computer.enqueue_input(settings[2]);
+        c_computer.enqueue_input(b_computer.output);
+        c_computer.run_no_suspend()?;
 
-                for d_input in 0..=4 {
-                    if d_input == a_input || d_input == b_input || d_input == c_input {
-                        continue;
-                    }
-                    let mut d_computer = computer.clone();
-                    d_computer.enqueue_input(d_input);
-                    d_computer.enqueue_input(c_output);
-                    d_computer.run()?;
-                    let d_output = d_computer.output;
+        let mut d_computer = computer.clone();
+        d_computer.enqueue_input(settings[3]);
+        d_computer.enqueue_input(c_computer.output);
+        d_computer.run_no_suspend()?;
 
-                    for e_input in 0..=4 {
-                        if e_input == a_input || e_input == b_input || e_input == c_input || e_input == d_input {
-                            continue;
-                        }
-                        let mut e_computer = computer.clone();
-                        e_computer.enqueue_input(e_input);
-                        e_computer.enqueue_input(d_output);
-                        e_computer.run()?;
-                        let e_output = e_computer.output;
+        let mut e_computer = computer.clone();
+        e_computer.enqueue_input(settings[4]);
+        e_computer.enqueue_input(d_computer.output);
+        e_computer.run_no_suspend()?;
 
-                        if e_output > max {
-                            max = e_output;
-                        }
-
-                    }
-                }
-            }
+        if e_computer.output > max {
+            max = e_computer.output;
         }
     }
+
     Ok(format!("{}", max))
 }
 
@@ -100,9 +77,6 @@ fn get_input() -> io::Result<Computer> {
     let contents = fs::read_to_string("resources/day07.txt")?;
     Ok(Computer::parse(&contents))
 }
-
-
-
 
 #[cfg(test)]
 mod tests {
