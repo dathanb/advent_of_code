@@ -1,7 +1,7 @@
 use std::io;
 use std::fs;
 
-use crate::intcode::{Computer};
+use crate::intcode::{Computer, ComputerStatus};
 use crate::permute;
 
 #[allow(dead_code)]
@@ -16,21 +16,12 @@ fn part1() -> Result<String, String> {
 
 #[allow(dead_code)]
 fn part2() -> Result<String, String> {
-    /*
-    For part 2, we need to update how we think about the computers.
-    Instead of us providing static input, running the computer to completion, and collecting the output,
-    we now need the ability to treat the computers like coroutines, where we provide some input and run the computer
-    only until it produces output, and we can resume the computer at some later point.
+    let computer = match get_input() {
+        Ok(c) => c,
+        Err(n) => return Err(format!("{}", n)),
+    };
 
-    So we'll need to update the `run` method to return Result<bool, String>, just like `step` does, where the `bool`
-    indicates whether the computer is capable of still running.
-
-    We should replace the `bool` with an enum, though, because it's not immediately clear whether true means
-    "can still run" or "has terminated".
-
-    So let's do that first -- replace the bool with an enum.
-    */
-    unimplemented!()
+    return compute_part2(&computer);
 }
 
 fn compute_part1(computer: &Computer) -> Result<String, String> {
@@ -56,6 +47,46 @@ fn compute_part1(computer: &Computer) -> Result<String, String> {
             computers[i].enqueue_input(input);
             computers[i].run_no_suspend()?;
             input = computers[i].output;
+        }
+
+        // at this point input has the output from the final computer execution
+        if input > max {
+            max = input;
+        }
+    }
+
+    Ok(format!("{}", max))
+}
+
+fn compute_part2(computer: &Computer) -> Result<String, String> {
+    // let's do this the super naive way:
+    let mut max = -1;
+    computer.print();
+
+    let num_computers = 5;
+    let initial_input = 0;
+
+    let possible_phase_settings = vec![5,6,7,8,9];
+
+    for settings in permute::permute(possible_phase_settings) {
+        let mut computers:Vec<Computer> = Vec::with_capacity(num_computers);
+        for _ in 0..num_computers {
+            computers.push(computer.clone());
+        }
+
+        let mut input = initial_input;
+        let mut status = ComputerStatus::Running;
+
+        for i in 0..num_computers {
+            computers[i].enqueue_input(settings[i]);
+        }
+
+        while status != ComputerStatus::Terminated {
+            for i in 0..num_computers {
+                computers[i].enqueue_input(input);
+                status = computers[i].run()?;
+                input = computers[i].output;
+            }
         }
 
         // at this point input has the output from the final computer execution
@@ -109,28 +140,28 @@ mod tests {
         assert_eq!(actual_output, "65464");
     }
 
-//    #[test]
-//    fn test_part2_input1() {
-//        let input = "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5";
-//        let expected_output = "139629729";
-//        let computer = Computer::parse(input);
-//        let actual_output = compute_part2(&computer).unwrap();
-//        assert_eq!(actual_output, expected_output);
-//    }
-//
-//    #[test]
-//    fn test_part2_input2() {
-//        let input = "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10";
-//        let expected_output = "18216";
-//        let computer = Computer::parse(input);
-//        let actual_output = compute_part2(&computer).unwrap();
-//        assert_eq!(actual_output, expected_output);
-//    }
-//
-//    #[test]
-//    fn test_part2() {
-//        let expected_output = String::from("foo");
-//        let actual_output = part2().unwrap();
-//        assert_eq!(actual_output, expected_output);
-//    }
+    #[test]
+    fn test_part2_input1() {
+        let input = "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5";
+        let expected_output = "139629729";
+        let computer = Computer::parse(input);
+        let actual_output = compute_part2(&computer).unwrap();
+        assert_eq!(actual_output, expected_output);
+    }
+
+    #[test]
+    fn test_part2_input2() {
+        let input = "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10";
+        let expected_output = "18216";
+        let computer = Computer::parse(input);
+        let actual_output = compute_part2(&computer).unwrap();
+        assert_eq!(actual_output, expected_output);
+    }
+
+    #[test]
+    fn test_part2() {
+        let expected_output = String::from("1518124");
+        let actual_output = part2().unwrap();
+        assert_eq!(actual_output, expected_output);
+    }
 }
