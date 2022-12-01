@@ -7,14 +7,14 @@ pub fn part1() -> Result<i32> {
     let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
 
     elves.sort();
-    return Ok(elves.iter().rev().take(1).sum::<i32>());
+    Ok(elves.iter().rev().take(1).sum::<i32>())
 }
 
 pub fn part2() -> Result<i32> {
     let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
 
     elves.sort();
-    return Ok(elves.iter().rev().take(3).sum::<i32>());
+    Ok(elves.iter().rev().take(3).sum::<i32>())
 }
 
 fn get_elves(calories: Vec<Option<i32>>) -> Vec<i32> {
