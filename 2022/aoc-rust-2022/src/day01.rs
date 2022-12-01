@@ -7,7 +7,7 @@ pub fn part1() -> Result<()> {
     let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
 
     elves.sort();
-    println!("{}", elves[elves.len()-1]);
+    println!("{:?}", elves.iter().rev().take(1).sum::<i32>());
 
     Ok(())
 }
@@ -16,8 +16,7 @@ pub fn part2() -> Result<()> {
     let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
 
     elves.sort();
-    let sum = elves[elves.len()-1] + elves[elves.len()-2] + elves[elves.len()-3];
-    println!("{}", sum);
+    println!("{:?}", elves.iter().rev().take(3).sum::<i32>());
 
     Ok(())
 }
