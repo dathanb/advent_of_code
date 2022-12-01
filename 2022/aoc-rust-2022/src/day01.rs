@@ -3,22 +3,18 @@ use std::io::{self, BufRead};
 use std::path::Path;
 use anyhow::Result;
 
-pub fn part1() -> Result<()> {
+pub fn part1() -> Result<i32> {
     let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
 
     elves.sort();
-    println!("{}", elves.iter().rev().take(1).sum::<i32>());
-
-    Ok(())
+    return Ok(elves.iter().rev().take(1).sum::<i32>());
 }
 
-pub fn part2() -> Result<()> {
+pub fn part2() -> Result<i32> {
     let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
 
     elves.sort();
-    println!("{}", elves.iter().rev().take(3).sum::<i32>());
-
-    Ok(())
+    return Ok(elves.iter().rev().take(3).sum::<i32>());
 }
 
 fn get_elves(calories: Vec<Option<i32>>) -> Vec<i32> {
@@ -55,12 +51,14 @@ mod tests {
 
     #[test]
     pub fn test_part1() -> Result<()>{
-        part1()
+        assert_eq!(73211, part1()?);
+        Ok(())
     }
 
     #[test]
     pub fn test_part2() -> Result<()>{
-        part2()
+        assert_eq!(213958, part2()?);
+        Ok(())
     }
 
     #[test]
