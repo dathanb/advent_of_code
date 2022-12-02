@@ -1,7 +1,7 @@
 use std::fs::File;
-use std::io::{self, BufRead};
-use std::path::Path;
+use std::io;
 use anyhow::Result;
+use crate::shared::read_lines;
 
 pub fn part1() -> Result<i32> {
     let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
@@ -36,13 +36,6 @@ fn get_ints(lines: io::Lines<io::BufReader<File>>) -> Vec<Option<i32>> {
         _ => panic!("Failed to read one or more lines")
     }).collect()
 }
-
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-    where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
-
 
 #[cfg(test)]
 mod tests {
