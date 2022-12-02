@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 use anyhow::Result;
+use crate::shared::read_lines;
 
 pub fn part1() -> Result<i32> {
     let lines = read_lines("data/day02.txt")?;
@@ -72,12 +73,6 @@ pub fn part2() -> Result<i32> {
     Ok(score)
 }
 
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-    where P: AsRef<Path>, {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
-
 #[cfg(test)]
 mod tests {
     use crate::day02::{part1, part2};
@@ -87,6 +82,7 @@ mod tests {
     pub fn test_part1() -> Result<()> {
         let score = part1()?;
         println!("{}", score);
+        assert_eq!(12679, score);
         Ok(())
     }
 
@@ -94,6 +90,7 @@ mod tests {
     pub fn test_part2() -> Result<()> {
         let score = part2()?;
         println!("{}", score);
+        assert_eq!(14470, score);
         Ok(())
     }
 }
