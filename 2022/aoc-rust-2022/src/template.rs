@@ -5,11 +5,13 @@ use crate::shared::read_lines;
 
 pub fn dayn_part1() -> Result<i32> {
     let lines = read_lines("data/dayn.txt")?;
+    todo!()
 }
 
 
 pub fn dayn_part2() -> Result<i32> {
     let lines = read_lines("data/dayn.txt")?;
+    todo!()
 }
 
 #[cfg(test)]
