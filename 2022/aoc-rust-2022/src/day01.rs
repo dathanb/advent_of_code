@@ -1,17 +1,15 @@
-use std::fs::File;
-use std::io;
 use anyhow::Result;
 use crate::shared::read_lines;
 
 pub fn part1() -> Result<i32> {
-    let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
+    let mut elves = get_elves(get_ints(read_lines("data/day01.txt")));
 
     elves.sort();
     Ok(elves.iter().rev().take(1).sum::<i32>())
 }
 
 pub fn part2() -> Result<i32> {
-    let mut elves = get_elves(get_ints(read_lines("data/day01.txt")?));
+    let mut elves = get_elves(get_ints(read_lines("data/day01.txt")));
 
     elves.sort();
     Ok(elves.iter().rev().take(3).sum::<i32>())
@@ -30,11 +28,8 @@ fn get_elves(calories: Vec<Option<i32>>) -> Vec<i32> {
     vec
 }
 
-fn get_ints(lines: io::Lines<io::BufReader<File>>) -> Vec<Option<i32>> {
-    lines.map(|l| match l {
-        Ok(i) => i.parse::<i32>().map_or(None, |i| Some(i)),
-        _ => panic!("Failed to read one or more lines")
-    }).collect()
+fn get_ints(lines: Vec<String>) -> Vec<Option<i32>> {
+    lines.iter().map(|l| l.parse::<i32>().map_or(None, |i| Some(i))).collect()
 }
 
 #[cfg(test)]
@@ -56,13 +51,13 @@ mod tests {
 
     #[test]
     pub fn test_get_ints() -> Result<()> {
-        println!("{:?}", get_ints(read_lines("data/day01.txt")?));
+        println!("{:?}", get_ints(read_lines("data/day01.txt")));
         Ok(())
     }
 
     #[test]
     pub fn test_get_elves() -> Result<()> {
-        println!("{:?}", get_elves(get_ints(read_lines("data/day01.txt")?)));
+        println!("{:?}", get_elves(get_ints(read_lines("data/day01.txt"))));
         Ok(())
     }
 }

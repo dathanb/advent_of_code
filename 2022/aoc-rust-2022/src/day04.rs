@@ -1,35 +1,33 @@
-use std::io::{self, BufRead};
-use std::path::Path;
 use anyhow::Result;
 use crate::shared::read_lines;
 
-pub fn dayn_part1(path: &str) -> Result<i32> {
-    let lines = read_lines(path)?;
+pub fn day04_part1(path: &str) -> Result<i32> {
+    let lines = read_lines(path);
     todo!()
 }
 
 
-pub fn dayn_part2(path: &str) -> Result<i32> {
-    let lines = read_lines(path)?;
+pub fn day04_part2(path: &str) -> Result<i32> {
+    let lines = read_lines(path);
     todo!()
 }
 
 #[cfg(test)]
 mod tests {
     use anyhow::Result;
-    use crate::dayn::{dayn_part1, dayn_part2};
+    use crate::day04::{day04_part1, day04_part2};
 
     #[test]
     pub fn test_part1() -> Result<()> {
-        let score = dayn_part1("data/dayn_test.txt")?;
+        let score = day04_part1("data/day04_test.txt")?;
         println!("{}", score);
-        assert_eq!(0, score);
+        assert_eq!(2, score);
         Ok(())
     }
 
     #[test]
     pub fn run_part1() -> Result<()> {
-        let score = dayn_part1("data/dayn.txt")?;
+        let score = day04_part1("data/day04.txt")?;
         println!("{}", score);
         assert_eq!(0, score);
         Ok(())
@@ -37,7 +35,7 @@ mod tests {
 
     #[test]
     pub fn test_part2() -> Result<()> {
-        let score = dayn_part2("data/dayn_test.txt")?;
+        let score = day04_part2("data/day04_test.txt")?;
         println!("{}", score);
         assert_eq!(0, score);
         Ok(())
@@ -45,7 +43,7 @@ mod tests {
 
     #[test]
     pub fn run_part2() -> Result<()> {
-        let score = dayn_part2("data/dayn.txt")?;
+        let score = day04_part2("data/day04.txt")?;
         println!("{}", score);
         assert_eq!(0, score);
         Ok(())

@@ -3,7 +3,7 @@ use crate::shared::read_lines;
 use regex::Regex;
 
 pub fn day05_part1(path: &str) -> Result<String> {
-    let lines: Vec<String> = read_lines(path)?.into_iter().map(|s|s.unwrap()).collect();
+    let lines: Vec<String> = read_lines(path);
     let mut stacks = get_stacks(&lines);
     let starting_line = stacks.iter().map(|s| s.len()).max().unwrap() + 2;
 
@@ -32,9 +32,8 @@ pub fn day05_part1(path: &str) -> Result<String> {
 }
 
 pub fn day05_part2(path: &str) -> Result<String> {
-    let lines = read_lines(path)?;
+    let lines = read_lines(path);
 
-    let lines: Vec<String> = read_lines(path)?.into_iter().map(|s|s.unwrap()).collect();
     let mut stacks = get_stacks(&lines);
     let starting_line = stacks.iter().map(|s| s.len()).max().unwrap() + 2;
 

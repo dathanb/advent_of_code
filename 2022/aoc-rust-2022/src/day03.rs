@@ -1,16 +1,11 @@
 use std::collections::HashSet;
-use std::io::{self};
 use anyhow::{anyhow, Result};
 use crate::shared::read_lines;
 
 pub fn day3_part1() -> Result<i32> {
-    let lines = read_lines("data/day03.txt")?;
+    let lines = read_lines("data/day03.txt");
     let mut sum = 0;
     for line in lines {
-        if line.is_err() {
-            return Err(anyhow!("One or more lines couldn't be parsed"));
-        }
-        let line = line.unwrap();
         let compartment1 = &line[0..line.len()/2];
         let compartment2 = &line[line.len()/2..line.len()];
 
@@ -32,13 +27,12 @@ pub fn day3_part1() -> Result<i32> {
 
 
 pub fn day3_part2() -> Result<i32> {
-    let lines = read_lines("data/day03.txt")?;
+    let lines = read_lines("data/day03.txt");
     let mut sum = 0;
-    let lines: Vec<Result<String, io::Error>> = lines.collect();
     for group in lines.chunks(3) {
-        let bag1 = group[0].as_ref().unwrap();
-        let bag2 = group[1].as_ref().unwrap();
-        let bag3 = group[2].as_ref().unwrap();
+        let bag1 = &group[0];
+        let bag2 = &group[1];
+        let bag3 = &group[2];
 
         let shared = HashSet::<char>::from_iter(bag1.chars());
         let set2 = HashSet::<char>::from_iter(bag2.chars());

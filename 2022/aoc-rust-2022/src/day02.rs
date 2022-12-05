@@ -2,11 +2,9 @@ use anyhow::{anyhow, Result};
 use crate::shared::read_lines;
 
 pub fn part1() -> Result<i32> {
-    let lines = read_lines("data/day02.txt")?;
+    let lines = read_lines("data/day02.txt");
     let mut score = 0;
     for line in lines {
-        let line = line.expect("Couldn't get one or more lines");
-
         let parts: Vec<&str> = line.split(" ").collect();
         let opposing_move = RockPaperScissors::parse(parts[0])?;
         let my_move = RockPaperScissors::parse(parts[1])?;
@@ -18,11 +16,9 @@ pub fn part1() -> Result<i32> {
 }
 
 pub fn part2() -> Result<i32> {
-    let lines = read_lines("data/day02.txt")?;
+    let lines = read_lines("data/day02.txt");
     let mut score = 0;
     for line in lines {
-        let line = line.expect("Couldn't get one or more lines");
-
         let parts: Vec<&str> = line.split(" ").collect();
         let opposing_move = RockPaperScissors::parse(parts[0])?;
         let my_move = match parts[1] {
