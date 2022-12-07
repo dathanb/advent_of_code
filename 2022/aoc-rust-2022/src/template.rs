@@ -1,16 +1,14 @@
-use std::io::{self, BufRead};
-use std::path::Path;
 use anyhow::Result;
 use crate::shared::read_lines;
 
 pub fn dayn_part1(path: &str) -> Result<i32> {
-    let lines = read_lines(path)?;
+    let lines = read_lines(path);
     todo!()
 }
 
 
 pub fn dayn_part2(path: &str) -> Result<i32> {
-    let lines = read_lines(path)?;
+    let lines = read_lines(path);
     todo!()
 }
 
