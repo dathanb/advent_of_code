@@ -8,6 +8,7 @@ mod day05;
 mod day04;
 mod day06;
 mod day07;
+mod day08;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -34,6 +35,10 @@ fn main() {
         "7.1.test" => {day07::day07_part1("data/day07_test.txt").unwrap();}
         "7.2" => {day07::day07_part2("data/day07.txt").unwrap();}
         "7.2.test" => {day07::day07_part2("data/day07_test.txt").unwrap();}
+        "8.1" => {day08::day08_part1("data/day08.txt").unwrap();}
+        "8.1.test" => {day08::day08_part1("data/day08_test.txt").unwrap();}
+        "8.2" => {day08::day08_part2("data/day08.txt").unwrap();}
+        "8.2.test" => {day08::day08_part2("data/day08_test.txt").unwrap();}
         _ => println!("Didn't understand the argument")
 
     };
