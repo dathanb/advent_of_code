@@ -1,3 +1,4 @@
+use std::ops::Index;
 use anyhow::Result;
 use crate::shared::read_lines;
 
@@ -74,7 +75,8 @@ pub fn day08_part2(path: &str) -> Result<i32> {
     let mut max_visibility_score = i32::MIN;
     for row in 0..rows {
         for col in 0..cols {
-            max_visibility_score = std::cmp::max(calculate_visibility_score(&nums, row, col, rows, cols), max_visibility_score);
+            let coordinate = Coordinate{row, col, rows, cols};
+            max_visibility_score = std::cmp::max(calculate_visibility_score(&nums, coordinate), max_visibility_score);
         }
     }
 
@@ -91,8 +93,7 @@ fn to_height_map(lines: Vec<String>) -> Result<Vec<i32>> {
     Ok(nums)
 }
 
-fn calculate_visibility_score(nums: &Vec<i32>, row: usize, col: usize, rows: usize, cols: usize) -> i32 {
-    let coordinate = Coordinate{row, col, rows, cols};
+fn calculate_visibility_score(nums: &Vec<i32>, coordinate: Coordinate) -> i32 {
     let scores = vec![calculate_directional_visibility_score(nums, coordinate.clone(), Direction::Left),
          calculate_directional_visibility_score(nums, coordinate.clone(), Direction::Right),
          calculate_directional_visibility_score(nums, coordinate.clone(), Direction::Up),
@@ -103,11 +104,11 @@ fn calculate_visibility_score(nums: &Vec<i32>, row: usize, col: usize, rows: usi
 fn calculate_directional_visibility_score(heights: &Vec<i32>, coordinate: Coordinate, direction: Direction) -> i32 {
     let mut coordinate = coordinate;
     let mut score = 0;
-    let height = heights[coordinate.index()];
+    let height = heights[&coordinate];
     while let Some(new_coordinate) = coordinate.increment(&direction) {
         coordinate = new_coordinate;
         score += 1;
-        if heights[coordinate.index()] >= height {
+        if heights[&coordinate] >= height {
             break;
         }
     }
@@ -138,10 +139,6 @@ impl Coordinate {
             Direction::Down => self.spawn(self.row+1, self.col)
         }
     }
-
-    fn index(&self) -> usize {
-        self.row * self.cols + self.col
-    }
 }
 
 enum Direction {
@@ -149,6 +146,16 @@ enum Direction {
     Right,
     Down,
     Up
+}
+
+impl Index<&Coordinate> for Vec<i32> {
+type Output = i32;
+
+    #[inline]
+    fn index(&self, index: &Coordinate) -> &Self::Output {
+        let index = index.row * index.cols + index.col;
+        Index::index(&**self, index)
+    }
 }
 
 #[cfg(test)]
