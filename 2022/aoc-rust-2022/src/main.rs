@@ -9,10 +9,12 @@ mod day04;
 mod day06;
 mod day07;
 mod day08;
+mod day09;
+mod coordinate;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    match args[0].as_str() {
+    match args[1].as_str() {
         "1.1" => {day01::part1().unwrap();}
         "1.2" => {day01::part2().unwrap();}
         "2.1" => {day02::part1().unwrap();}
@@ -39,6 +41,10 @@ fn main() {
         "8.1.test" => {day08::day08_part1("data/day08_test.txt").unwrap();}
         "8.2" => {day08::day08_part2("data/day08.txt").unwrap();}
         "8.2.test" => {day08::day08_part2("data/day08_test.txt").unwrap();}
+        "9.1" => {day09::day09_part1("data/day09.txt").unwrap();}
+        "9.1.test" => {day09::day09_part1("data/day09_test.txt").unwrap();}
+        "9.2" => {day09::day09_part2("data/day09.txt").unwrap();}
+        "9.2.test" => {day09::day09_part2("data/day09_test.txt").unwrap();}
         _ => println!("Didn't understand the argument")
 
     };

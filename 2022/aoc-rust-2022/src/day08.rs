@@ -1,6 +1,6 @@
-use std::ops::Index;
 use anyhow::Result;
 use crate::shared::read_lines;
+use crate::coordinate::{Coordinate, Direction, RowOrientation};
 
 pub fn day08_part1(path: &str) -> Result<i32> {
     let lines = read_lines(path);
@@ -75,7 +75,7 @@ pub fn day08_part2(path: &str) -> Result<i32> {
     let mut max_visibility_score = i32::MIN;
     for row in 0..rows {
         for col in 0..cols {
-            let coordinate = Coordinate{row, col, rows, cols};
+            let coordinate = Coordinate{orientation: RowOrientation::Normal, row, col, rows, cols};
             max_visibility_score = std::cmp::max(calculate_visibility_score(&nums, coordinate), max_visibility_score);
         }
     }
@@ -105,7 +105,7 @@ fn calculate_directional_visibility_score(heights: &Vec<i32>, coordinate: Coordi
     let mut coordinate = coordinate;
     let mut score = 0;
     let height = heights[&coordinate];
-    while let Some(new_coordinate) = coordinate.increment(&direction) {
+    while let Ok(new_coordinate) = coordinate.increment(&direction) {
         coordinate = new_coordinate;
         score += 1;
         if heights[&coordinate] >= height {
@@ -115,48 +115,6 @@ fn calculate_directional_visibility_score(heights: &Vec<i32>, coordinate: Coordi
     score
 }
 
-#[derive(Clone, Copy)]
-struct Coordinate {
-    pub row: usize,
-    pub col: usize,
-    pub rows: usize,
-    pub cols: usize
-}
-
-impl Coordinate {
-    pub fn spawn(&self, new_row: usize, new_col: usize) -> Option<Coordinate> {
-        if new_row >= self.rows || new_col >= self.cols {
-            return None;
-        }
-        Some(Coordinate {row: new_row, col: new_col, rows: self.rows, cols: self.cols})
-    }
-
-    fn increment(&self, direction: &Direction) -> Option<Coordinate> {
-        match direction {
-            Direction::Left => if self.col == 0 { None } else { self.spawn(self.row, self.col-1) },
-            Direction::Right => self.spawn(self.row, self.col+1),
-            Direction::Up => if self.row == 0 { None } else { self.spawn(self.row-1, self.col) },
-            Direction::Down => self.spawn(self.row+1, self.col)
-        }
-    }
-}
-
-enum Direction {
-    Left,
-    Right,
-    Down,
-    Up
-}
-
-impl Index<&Coordinate> for Vec<i32> {
-type Output = i32;
-
-    #[inline]
-    fn index(&self, index: &Coordinate) -> &Self::Output {
-        let index = index.row * index.cols + index.col;
-        Index::index(&**self, index)
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -191,7 +149,7 @@ mod tests {
     pub fn run_part2() -> Result<()> {
         let score = day08_part2("data/day08.txt")?;
         println!("{}", score);
-        assert_eq!(0, score);
+        assert_eq!(474606, score);
         Ok(())
     }
 }
