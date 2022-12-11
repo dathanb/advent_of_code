@@ -11,6 +11,7 @@ pub struct Coordinate {
 }
 
 impl Coordinate {
+    /// Initializes a new coordinate at the origin of a plane with normal orientation
     pub fn new(rows: usize, cols: usize) -> Coordinate {
         Coordinate {
             row: 0,
