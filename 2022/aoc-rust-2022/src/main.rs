@@ -11,6 +11,7 @@ mod day07;
 mod day08;
 mod day09;
 mod coordinate;
+mod day10;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
