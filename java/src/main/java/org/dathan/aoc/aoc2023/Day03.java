@@ -9,7 +9,6 @@ import java.util.Set;
 
 public class Day03 {
     public long part1(List<String> input) {
-        HashMap<Coordinate, Character> symbols = new HashMap<>();
         HashMap<Coordinate, Integer> partNumberLocation = new HashMap<>();
         HashMap<Integer, Integer> partNumbers = new HashMap<>();
 
@@ -66,7 +65,6 @@ public class Day03 {
     }
 
     public long part2(List<String> input) {
-        HashMap<Coordinate, Character> symbols = new HashMap<>();
         HashMap<Coordinate, Integer> partNumberLocation = new HashMap<>();
         HashMap<Integer, Integer> partNumbers = new HashMap<>();
 
