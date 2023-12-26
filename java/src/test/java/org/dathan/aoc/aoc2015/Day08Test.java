@@ -8,40 +8,39 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class Day07Test {
+class Day08Test {
     @Test
     public void part1() {
         List<String> input = getProblemInput();
-        assertEquals(3176, new Day07().part1(input));
+        assertEquals(1333, new Day08().part1(input));
     }
 
     @Test
     public void part2() {
         List<String> input = getProblemInput();
-        assertEquals(14710, new Day07().part2(input));
+        assertEquals(2046, new Day08().part2(input));
     }
 
     @Test
     public void part1ProvidedTestData() {
         List<String> input = IOUtil.getLines("""
-123 -> x
-456 -> y
-x AND y -> a
-x OR y -> e
-x LSHIFT 2 -> f
-y RSHIFT 2 -> g
-NOT x -> h
-NOT y -> i
+""
+"abc"
+"aaa\\"aaa"
+"\\x27"
 """);
-        assertEquals(72, new Day07().part1(input));
+        assertEquals(12, new Day08().part1(input));
+        assertEquals(3, new Day08().part1(Collections.singletonList("\"\\\"")));
+
     }
 
     @Test
     public void part2ProvidedTestData() {
+//        assertEquals(1, new Day08().part2(Collections.singletonList("turn on 0,0 through 0,0")));
     }
 
     private List<String> getProblemInput() {
-        return org.dathan.aoc.IOUtil.getLines(org.dathan.aoc.IOUtil.readFromResource("/2015/day07.txt"));
+        return IOUtil.getLines(IOUtil.readFromResource("/2015/day08.txt"));
     }
 
 }
