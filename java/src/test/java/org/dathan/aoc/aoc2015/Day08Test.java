@@ -30,8 +30,7 @@ class Day08Test {
 "\\x27"
 """);
         assertEquals(12, new Day08().part1(input));
-        assertEquals(3, new Day08().part1(Collections.singletonList("\"\\\"")));
-
+        assertEquals(3, new Day08().part1(Collections.singletonList("\"\\\\\"")));
     }
 
     @Test
