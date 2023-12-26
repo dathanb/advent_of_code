@@ -1,7 +1,5 @@
 package org.dathan.aoc.aoc2015;
 
-import org.dathan.aoc.aoc2023.Day04;
-import org.dathan.aoc.aoc2023.IOUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
